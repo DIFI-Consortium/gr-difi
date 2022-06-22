@@ -15,11 +15,11 @@
  */
 
 
- 
+
  static const char *__doc_gr_difi_difi_source_cpp = R"doc()doc";
 
  static const char *__doc_gr_difi_difi_source_cpp_difi_source_cpp = R"doc()doc";
 
  static const char *__doc_gr_difi_difi_source_cpp_make = R"doc()doc";
- 
+
 

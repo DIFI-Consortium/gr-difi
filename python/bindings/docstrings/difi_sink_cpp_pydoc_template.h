@@ -15,12 +15,12 @@
  */
 
 
- 
+
  static const char *__doc_gr_difi_difi_sink_cpp = R"doc()doc";
- 
+
  static const char *__doc_gr_difi_difi_sink_cpp_difi_sink_cpp = R"doc()doc";
 
 
  static const char *__doc_gr_difi_difi_sink_cpp_make = R"doc()doc";
 
-  
+
