@@ -12,7 +12,6 @@ The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Mod
 - [Examples](#examples)
 - [Frequently Asked Questions](#frequently-asked-questions)
 - [Support](#support)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## DIFI Blocks Using the IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard
@@ -122,16 +121,10 @@ For a list of common questions, including problems and resolutions, please check
 
 ## Support
 
-This project uses [GitHub Issues](https://github.com/DIFI-Consortium/gr-difi/issues) to track bugs and feature requests. Please refer to our [Support Guide](SUPPORT.md#how-to-file-issues-and-get-help) for more details.
+This project uses [GitHub Issues](https://github.com/DIFI-Consortium/gr-difi/issues) to track bugs and feature requests.
 
 Before filing a new issue, please check our [FAQ](./docs/FAQ.md) for potential solutions to common problems.
 
-Starting with [GNU Radio](https://github.com/gnuradio/gnuradio) maint-3.9, this project will support the same set of [maintenance branches](https://github.com/gnuradio/gnuradio/branches) tracked by GNU Radio.
-
-## Contributing
-
-[Contributing Guide](./CONTRIBUTING.md)
-
 ## License
 
-This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE.txt) file for details
+This project is licensed under the GNU General Public License v3.0 or later - see the [LICENSE](LICENSE) file for details
