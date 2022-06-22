@@ -1,6 +1,6 @@
-# Digital Intermediate Frequency Interoperability (DIFI) Out of Tree Module
+# DIFI Out of Tree Module
 
-The gr-difi Out of Tree (OOT) Module allows users to communicate with [DIFI](https://dificonsortium.org/about/) devices by streaming and receiving DIFI samples within a GNU Radio flowgraph.
+The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Module allows users to communicate with [DIFI](https://dificonsortium.org/about/) devices by streaming and receiving DIFI samples within a GNU Radio flowgraph.
 
 
 ## Table of Contents
