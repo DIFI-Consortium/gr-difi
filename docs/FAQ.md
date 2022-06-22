@@ -30,7 +30,7 @@ You'll need to install the liborc package. On Ubuntu 20.04, you can install the 
 sudo apt install liborc-0.4-dev
 ```
 
-You should now be able to compile gr-azure.
+You should now be able to compile gr-difi.
 
 ## I just compiled and installed the OOT Module, but all of the unit tests are failing. What now?
 Check the test output for the specific errors that were thrown. If you ran the tests with `make test`, the error logs should be in Testing/Temporary/LastTest.log, starting from the build directory.
