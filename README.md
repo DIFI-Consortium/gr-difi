@@ -122,7 +122,7 @@ For a list of common questions, including problems and resolutions, please check
 
 ## Support
 
-This project uses [GitHub Issues](https://github.com/microsoft/gr-difi/issues) to track bugs and feature requests. Please refer to our [Support Guide](SUPPORT.md#how-to-file-issues-and-get-help) for more details.
+This project uses [GitHub Issues](https://github.com/DIFI-Consortium/gr-difi/issues) to track bugs and feature requests. Please refer to our [Support Guide](SUPPORT.md#how-to-file-issues-and-get-help) for more details.
 
 Before filing a new issue, please check our [FAQ](./docs/FAQ.md) for potential solutions to common problems.
 
