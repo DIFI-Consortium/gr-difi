@@ -1,0 +1,12 @@
+/*!
+ * \defgroup GNU Radio DIFI Out of Tree Module
+ * \brief All blocks that can be used from the DIFI GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ * @{
+ */
+
+ /** @defgroup difi DIFI library */
+
+ /** @} */
+
