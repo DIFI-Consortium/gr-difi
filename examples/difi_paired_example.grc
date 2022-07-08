@@ -44,8 +44,8 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
-- name: difi_difi_sink_cpp_0
-  id: difi_difi_sink_cpp
+- name: difi_sink_cpp_0
+  id: difi_sink_cpp
   parameters:
     affinity: ''
     alias: ''
@@ -73,8 +73,8 @@ blocks:
     coordinate: [680, 268.0]
     rotation: 0
     state: enabled
-- name: difi_difi_source_cpp_0
-  id: difi_difi_source_cpp
+- name: difi_source_cpp_0
+  id: difi_source_cpp
   parameters:
     affinity: ''
     alias: ''
@@ -97,7 +97,7 @@ blocks:
     state: enabled
 
 connections:
-- [difi_difi_source_cpp_0, '0', difi_difi_sink_cpp_0,
+- [difi_source_cpp_0, '0', difi_sink_cpp_0,
   '0']
 
 metadata:
