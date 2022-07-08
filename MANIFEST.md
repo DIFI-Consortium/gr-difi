@@ -15,4 +15,4 @@ repo: https://github.com/DIFI-Consortium/gr-difi.git
 gr_supported_version: v3.9, v3.10
 stable_release: HEAD
 ---
-blurb about DIFI and how this OOT contains a Source and Sink block
+The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Module allows users to communicate with DIFI devices by streaming and receiving DIFI samples within a GNU Radio flowgraph.  This OOT contains a DIFI Sink to create DIFI streams from GR, and a DIFI Source to take in DIFI streams for processing.  Both TCP and UDP DIFI streams are supported.
