@@ -9,6 +9,7 @@
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
 #include <iostream>
@@ -28,7 +29,7 @@ namespace gr {
         memset(&d_servaddr, 0, sizeof(d_servaddr));
         d_servaddr.sin_family = AF_INET;
         d_servaddr.sin_port = htons(port);
-        d_servaddr.sin_addr.s_addr = INADDR_ANY;
+        d_servaddr.sin_addr.s_addr = inet_addr(ip_addr.c_str());
 
         create_socket();
       }
