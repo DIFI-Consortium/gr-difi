@@ -66,8 +66,8 @@ blocks:
     coordinate: [96, 236.0]
     rotation: 0
     state: enabled
-- name: difi_difi_sink_cpp_0
-  id: difi_difi_sink_cpp
+- name: difi_sink_cpp_0
+  id: difi_sink_cpp
   parameters:
     affinity: ''
     alias: ''
@@ -95,8 +95,8 @@ blocks:
     coordinate: [688, 268.0]
     rotation: 0
     state: enabled
-- name: difi_difi_source_cpp_0_0
-  id: difi_difi_source_cpp
+- name: difi_source_cpp_0_0
+  id: difi_source_cpp
   parameters:
     affinity: ''
     alias: ''
@@ -333,8 +333,8 @@ blocks:
 
 connections:
 - [analog_sig_source_x_0, '0', blocks_throttle_0, '0']
-- [difi_difi_source_cpp_0_0, '0', qtgui_time_sink_x_0_0, '0']
-- [blocks_throttle_0, '0', difi_difi_sink_cpp_0, '0']
+- [difi_source_cpp_0_0, '0', qtgui_time_sink_x_0_0, '0']
+- [blocks_throttle_0, '0', difi_sink_cpp_0, '0']
 - [blocks_throttle_0, '0', qtgui_time_sink_x_0, '0']
 
 metadata:
