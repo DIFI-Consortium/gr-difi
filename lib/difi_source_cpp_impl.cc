@@ -274,8 +274,13 @@ namespace gr {
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("data_packet_payload_format"), pmt::from_uint64(context.payload_format));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("raw"), pmt::init_s8vector(size_gotten, &d_packet_buffer[0]));
       }
+      else if (size_gotten == 44)
+      {
+        std::string error_string = "ignoring apparent version flow signal context packet";
+        GR_LOG_WARN(this->d_logger, error_string);
+      }
       auto r_bit_depth = (context.payload_format >> 32 & 0x0000001f) + 1;
-      if (r_bit_depth != d_unpack_idx_size * 8 or (size_gotten != 108 and size_gotten != 72))
+      if (size_gotten != 44 and (r_bit_depth != d_unpack_idx_size * 8 or (size_gotten != 108 and size_gotten != 72)))
       {
         std::string error_string = r_bit_depth != d_unpack_idx_size * 8 ?
                                     "The context packet bit depth does not match the input bit depth, check your configuration.\nContext packet bit depth is: " + std::to_string(r_bit_depth) :
