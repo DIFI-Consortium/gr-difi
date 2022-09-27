@@ -280,7 +280,7 @@ namespace gr {
       std::tie(full, frac) = add_frac_full();
       u_int32_t header = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       pack_u32(&to_send[0], header);
-      std::copy(d_raw.begin() + 8, d_raw.begin() + 16, to_send.begin() + 8);
+      std::copy(d_raw.begin() + 4, d_raw.begin() + 16, to_send.begin() + 4);
       pack_u32(&to_send[16], full);
       pack_u64(&to_send[20], frac);
       std::copy(d_out_buf.begin(), d_out_buf.end(), to_send.begin() + difi::DIFI_HEADER_SIZE);
