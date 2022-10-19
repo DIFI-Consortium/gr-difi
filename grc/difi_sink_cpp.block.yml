@@ -85,7 +85,7 @@ parameters:
   label: The context packet size in bytes
   dtype: enum
   options: ['72', '108']
-  default: '72'
+  default: '108'
   hide: ${ ('all' if mode == 'True' else 'none') }
 - id: scaling
   category: Scaling
