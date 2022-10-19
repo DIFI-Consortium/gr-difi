@@ -51,11 +51,11 @@ parameters:
 - id: reference_time_full
   label: Reference Time Full
   dtype: int
-  default: 0
+  default: 1666209080
 - id: reference_time_frac
   label: Reference Time Frac
   dtype: int
-  default: 0
+  default: 964925050735
 - id: data_size
   label: Samples Per Packet
   dtype: int
@@ -134,10 +134,10 @@ documentation: |-
      ===Params===
 
      reference_time_full:
-     The initial refernce time full for the DIFI (VITA) data packets until a timing tag is recieved via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode
+     The initial reference time in seconds for the DIFI (VITA) data packets until a timing tag is received via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode.
 
      reference_time_frac:
-     The initial refernce time frac for the DIFI (VITA) data packets until a timing tag is recieved via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode
+     The fractional initial reference time in picoseconds for the DIFI (VITA) data packets until a timing tag is received via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode.
 
      ip_addr:
      The ip address for the socket that DIFI (VITA) packets will be forwared to
