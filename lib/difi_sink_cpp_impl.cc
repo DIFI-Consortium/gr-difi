@@ -98,7 +98,10 @@ namespace gr {
 
       u_int32_t state_and_event_id =difi::DEFAULT_STATE_AND_EVENTS; // default no events or state values. See 7.1.5.17 The State and Event Indicator Field of the VITA spec
       u_int64_t to_vita_bw = u_int64_t(samp_rate * .8) << 20; // no fractional bw or samp rate supported in gnuradio, see 2.2.2 Standard Flow Signal Context Packet for bandwidth information
+      u_int64_t to_vita_if_band_offset= int64_t(samp_rate * -0.1) << 20; //generic IF band offset (1Hz resolution)
       u_int64_t to_vita_samp_rate = samp_rate << 20;
+      u_int64_t to_vita_if_ref_freq = 100000000UL << 20; //generic 100MHz IF reference frequency
+      u_int64_t to_vita_rf_ref_freq = 7500000000UL << 20; //generic 7.5GHz RF reference frequency
       if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
       {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_ALT_OFFSETS[idx++]], 966885376U);
@@ -118,9 +121,9 @@ namespace gr {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0xfbb98000u);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0x64u);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_bw);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_if_ref_freq);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_rf_ref_freq);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_if_band_offset);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_samp_rate);
