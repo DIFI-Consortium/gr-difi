@@ -16,18 +16,18 @@ namespace gr {
     typename difi_sink_cpp<T>::sptr
     difi_sink_cpp<T>::make(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr, uint32_t port, uint8_t socket_type,
                           bool mode, uint32_t samples_per_packet, int stream_number, int reference_point, u_int64_t samp_rate,
-                          int packet_class, int context_interval, int context_pack_size, int bit_depth,
+                          int context_interval, int context_pack_size, int bit_depth,
                           int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
     {
       return gnuradio::make_block_sptr<difi_sink_cpp_impl<T>>(reference_time_full, reference_time_frac, ip_addr, port, socket_type, mode,
-                                                              samples_per_packet, stream_number, reference_point, samp_rate, packet_class, context_interval, context_pack_size, bit_depth,
+                                                              samples_per_packet, stream_number, reference_point, samp_rate, context_interval, context_pack_size, bit_depth,
                                                               scaling, gain, offset, max_iq, min_iq);
     }
 
     template <class T>
     difi_sink_cpp_impl<T>::difi_sink_cpp_impl(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr,
                                               uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, int stream_number, int reference_point,
-                                              u_int64_t samp_rate, int packet_class, int context_interval, int context_pack_size, int bit_depth,
+                                              u_int64_t samp_rate, int context_interval, int context_pack_size, int bit_depth,
                                               int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
       : gr::sync_block("difi_sink_cpp_impl",
               gr::io_signature::make(1, 1, sizeof(T)),
@@ -35,7 +35,6 @@ namespace gr {
               d_stream_number(int(stream_number)),
               d_reference_point(reference_point),
               d_full_samp(samp_rate),
-              d_packet_class(packet_class),
               d_pkt_n(0),
               d_current_buff_idx(0),
               d_pcks_since_last_reference(0),
@@ -77,12 +76,13 @@ namespace gr {
       d_data_len = samples_per_packet * d_unpack_idx_size * 2;
       u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       u_int32_t tmp_header_context = d_context_static_bits ^ d_context_packet_count << 16 ^ (context_pack_size  / 4);
-      u_int64_t class_id = d_oui << 32 ^ d_packet_class;
+      u_int64_t d_class_id = d_oui << 32;
+      u_int64_t d_context_class_id = d_class_id ^ 1;
       d_raw.resize(difi::DIFI_HEADER_SIZE);
       pack_u32(&d_raw[0], tmp_header_data);
       pack_u32(&d_raw[4], d_stream_number);
       int idx = 0;
-      pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], class_id);
+      pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_class_id);
       pack_u32(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
       pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
 
@@ -91,7 +91,7 @@ namespace gr {
       pack_u32(&d_context_raw[0], tmp_header_context);
       pack_u32(&d_context_raw[4], d_stream_number);
       idx = 0;
-      pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], class_id);
+      pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_context_class_id);
       // this is static since only 8 or 16 bit signed complex cartesian is supported for now and item packing is always link efficient
       // see 2.2.2 Standard Flow Signal Context Packet in the DIFI spec for complete information
       u_int64_t data_payload_format = bit_depth == 8 ? difi::EIGHT_BIT_SIGNED_CART_LINK_EFF : difi::SIXTEEN_BIT_SIGNED_CART_LINK_EFF;

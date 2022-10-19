@@ -56,7 +56,6 @@ blocks:
     data_size: '255'
     ip_addr: 127.0.0.1
     mode: 'True'
-    packet_class: '0'
     port: '50003'
     protocol: '1'
     reference_point: '101'

@@ -78,7 +78,6 @@ blocks:
     data_size: '128'
     ip_addr: 127.0.0.1
     mode: 'False'
-    packet_class: '0'
     port: '50003'
     protocol: '2'
     reference_point: '101'

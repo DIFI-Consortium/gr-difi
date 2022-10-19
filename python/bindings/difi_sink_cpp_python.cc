@@ -36,7 +36,6 @@ void bind_difi_sink_cpp_template(py::module& m, const char* classname)
            py::arg("stream_number"),
            py::arg("reference_point"),
            py::arg("samp_rate"),
-           py::arg("packet_class"),
            py::arg("context_interval"),
            py::arg("context_pack_size"),
            py::arg("bit_depth"),
