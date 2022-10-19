@@ -107,6 +107,8 @@ namespace gr {
       int32_t to_vita_rf_gain = rf_gain_dB * (1<<7);
       int32_t to_vita_if_gain = if_gain_dB * (1<<7);
       int32_t to_vita_gain = to_vita_if_gain << 16 ^ to_vita_rf_gain;
+      double delay_sec = 1e-5; //generic 10 microsecond timestamp adjustment
+      int64_t to_vita_delay = delay_sec * 1e15; //convert to femtoseconds
       if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
       {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_ALT_OFFSETS[idx++]], 966885376U);
@@ -132,7 +134,7 @@ namespace gr {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_ref_level);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_gain);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_samp_rate);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_delay);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_full);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], state_and_event_id);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], data_payload_format);
