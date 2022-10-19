@@ -75,7 +75,7 @@ namespace gr {
       d_samples_per_packet = samples_per_packet;
       d_time_adj = (double)d_samples_per_packet / samp_rate;
       d_data_len = samples_per_packet * d_unpack_idx_size * 2;
-      u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len / 4);
+      u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       u_int32_t tmp_header_context = d_context_static_bits ^ d_context_packet_count << 16 ^ (context_pack_size  / 4);
       u_int64_t class_id = d_oui << 32 ^ d_packet_class;
       d_raw.resize(difi::DIFI_HEADER_SIZE);
