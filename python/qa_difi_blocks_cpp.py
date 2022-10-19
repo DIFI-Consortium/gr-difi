@@ -126,7 +126,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
 
         send_proc = Process(target=socket_send, args=(
@@ -149,7 +149,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, -1, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
 
         send_proc = Process(target=socket_send, args=(
@@ -172,7 +172,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         vita_data_time_change = bytearray(self.vita_data)
         full = b'\x00\x00\x00\x00'
@@ -216,7 +216,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, True,
-                                       SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data_time_change = bytearray(self.vita_data)
@@ -253,7 +253,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       False, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       False, SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         # keep one in two to test partial buffer
         keep_1_n = blocks.keep_one_in_n(gr.sizeof_gr_complex*1, 2)
         tb.connect(vita_source, keep_1_n)
@@ -303,7 +303,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, True,
-                                       SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data = bytearray(self.vita_data)
@@ -336,7 +336,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_sc8(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_sc8(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, True,
-                                      SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                      SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data = bytearray(self.vita_data)
@@ -368,7 +368,7 @@ class qa_testcpp(gr_unittest.TestCase):
         _, sink_p = get_open_ports()
         tb = gr.top_block()
         samp_rate = int(1e6)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, SAMPS_PER_PACKET, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, SAMPS_PER_PACKET, 0,
                                        int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -388,7 +388,7 @@ class qa_testcpp(gr_unittest.TestCase):
         _, sink_p = get_open_ports()
         tb = gr.top_block()
         add_const = blocks.add_const_cc(1)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 1024 // 2, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 1024 // 2, 0,
                                        int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, add_const)
@@ -410,7 +410,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 16, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, 1344 // 4, 0, 352, int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
+                                       True, 1344 // 4, 0, int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
 
         send_proc = Process(target=socket_send, args=(
@@ -431,7 +431,7 @@ class qa_testcpp(gr_unittest.TestCase):
         _, sink_p = get_open_ports()
         tb = gr.top_block()
         add_const = blocks.add_const_cc(1)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, add_const)
@@ -462,7 +462,7 @@ class qa_testcpp(gr_unittest.TestCase):
             expected.append(re[1])
             expected.append(im[0])
             expected.append(im[1])
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c(ran_vec, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -481,7 +481,7 @@ class qa_testcpp(gr_unittest.TestCase):
         _, sink_p = get_open_ports()
         tb = gr.top_block()
         samp_rate = int(1e6)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, SAMPS_PER_PACKET, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM, False, SAMPS_PER_PACKET, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -512,7 +512,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_STREAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, True,
-                                       SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
+                                       SAMPS_PER_PACKET, 0, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
 
         tb_proc = Process(target=run_tb, args=(tb,))
@@ -530,7 +530,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_STREAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data_time_change = bytearray(self.vita_data)
@@ -570,7 +570,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_STREAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data = bytearray(self.vita_data)
@@ -597,7 +597,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_sc8(
             '127.0.0.1', source_p, socket.SOCK_STREAM, 0, 8, 0)
         vita_sink = difi_sink_cpp_sc8(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM,
-                                      True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
+                                      True, SAMPS_PER_PACKET, 0, int(1e6), 100, 108, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         tb_proc = Process(target=run_tb, args=(tb,))
         vita_data = bytearray(self.vita_data)
@@ -629,7 +629,7 @@ class qa_testcpp(gr_unittest.TestCase):
                                         samp_rate, 8))
         socket_rec_test.start()
         time.sleep(1)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, SAMPS_PER_PACKET, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, SAMPS_PER_PACKET, 0,
                                        int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -652,7 +652,7 @@ class qa_testcpp(gr_unittest.TestCase):
         time.sleep(1)
 
         add_const = blocks.add_const_cc(1)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 1024 // 2, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 1024 // 2, 0,
                                        int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, add_const)
@@ -680,7 +680,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_STREAM, 0, 16, 0)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM,
-                                       True, 1344 // 4, 0, 352, int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
+                                       True, 1344 // 4, 0, int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
 
         tb_proc = Process(target=run_tb, args=(tb,))
@@ -702,7 +702,7 @@ class qa_testcpp(gr_unittest.TestCase):
         time.sleep(1)
 
         add_const = blocks.add_const_cc(1)
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, add_const)
@@ -736,7 +736,7 @@ class qa_testcpp(gr_unittest.TestCase):
         socket_rec_test.start()
         time.sleep(1)
 
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c(ran_vec, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -772,7 +772,7 @@ class qa_testcpp(gr_unittest.TestCase):
         socket_rec_test.start()
         time.sleep(1)
 
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 1, gain, offset, 0, 0)
         vector_source = blocks.vector_source_c(ran_vec, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -814,7 +814,7 @@ class qa_testcpp(gr_unittest.TestCase):
         socket_rec_test.start()
         time.sleep(1)
 
-        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0, 352,
+        vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM, False, 512, 0,
                                        int(1e6), 100, 72, 16, 2, 0, 0, maxiq, miniq)
         vector_source = blocks.vector_source_c(ran_vec, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -838,7 +838,7 @@ class qa_testcpp(gr_unittest.TestCase):
         time.sleep(1)
 
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_STREAM,
-                                       False, SAMPS_PER_PACKET, 0, 352,
+                                       False, SAMPS_PER_PACKET, 0,
                                        int(1e6), 100, 72, 16, 0, 0, 0, 0, 0)
         vector_source = blocks.vector_source_c((0, 0) * 512, False, 1, [])
         tb.connect(vector_source, vita_sink)
@@ -856,7 +856,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 1)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         send_proc = Process(target=socket_send, args=(
             ('127.0.0.1', source_p), socket.SOCK_DGRAM, self.bad_context_packet))
@@ -882,7 +882,7 @@ class qa_testcpp(gr_unittest.TestCase):
         vita_source = difi_source_cpp_fc32(
             '127.0.0.1', source_p, socket.SOCK_DGRAM, 0, 8, 2)
         vita_sink = difi_sink_cpp_fc32(0, 0, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
-                                       True, SAMPS_PER_PACKET, 0, 352, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
+                                       True, SAMPS_PER_PACKET, 0, int(1e6), 100, 72, 8, 0, 0, 0, 0, 0)
         tb.connect(vita_source, vita_sink)
         send_proc = Process(target=socket_send, args=(
             ('127.0.0.1', source_p), socket.SOCK_DGRAM, self.bad_context_packet))

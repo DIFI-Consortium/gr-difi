@@ -80,7 +80,6 @@ blocks:
     mode: 'False'
     port: '50003'
     protocol: '2'
-    reference_point: '101'
     reference_time_frac: '0'
     reference_time_full: '0'
     sample_rate: '100000'

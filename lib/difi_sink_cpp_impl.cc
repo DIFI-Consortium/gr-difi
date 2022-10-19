@@ -15,25 +15,24 @@ namespace gr {
     template <class T>
     typename difi_sink_cpp<T>::sptr
     difi_sink_cpp<T>::make(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr, uint32_t port, uint8_t socket_type,
-                          bool mode, uint32_t samples_per_packet, int stream_number, int reference_point, u_int64_t samp_rate,
+                          bool mode, uint32_t samples_per_packet, int stream_number, u_int64_t samp_rate,
                           int context_interval, int context_pack_size, int bit_depth,
                           int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
     {
       return gnuradio::make_block_sptr<difi_sink_cpp_impl<T>>(reference_time_full, reference_time_frac, ip_addr, port, socket_type, mode,
-                                                              samples_per_packet, stream_number, reference_point, samp_rate, context_interval, context_pack_size, bit_depth,
+                                                              samples_per_packet, stream_number, samp_rate, context_interval, context_pack_size, bit_depth,
                                                               scaling, gain, offset, max_iq, min_iq);
     }
 
     template <class T>
     difi_sink_cpp_impl<T>::difi_sink_cpp_impl(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr,
-                                              uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, int stream_number, int reference_point,
+                                              uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, int stream_number,
                                               u_int64_t samp_rate, int context_interval, int context_pack_size, int bit_depth,
                                               int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
       : gr::sync_block("difi_sink_cpp_impl",
               gr::io_signature::make(1, 1, sizeof(T)),
               gr::io_signature::make(0, 0, 0)),
               d_stream_number(int(stream_number)),
-              d_reference_point(reference_point),
               d_full_samp(samp_rate),
               d_pkt_n(0),
               d_current_buff_idx(0),
