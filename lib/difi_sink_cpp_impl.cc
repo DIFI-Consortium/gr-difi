@@ -69,7 +69,7 @@ namespace gr {
       d_static_change_key = pmt::intern("static_change");
       d_full = reference_time_full;
       d_frac = reference_time_frac;
-      d_static_bits = 0x18e00000; // default, will change after first packet else, this is the DIFI standard first 12 bits
+      d_static_bits = 0x18e00000; // header bits 31-20 must be 0x18e (posix), 0x18a (gps), or 0x186 (utc)
       d_context_static_bits = 0x49e00000;// header bits 31-20 must be 0x49e (posix), 0x49a (gps), or 0x496 (utc)
       d_unpack_idx_size = bit_depth == 8 ? 1 : 2;
       d_samples_per_packet = samples_per_packet;
