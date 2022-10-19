@@ -54,7 +54,7 @@ namespace gr {
         int d_stream_number;
         int d_reference_point;
         u_int32_t d_full_samp;
-        long d_oui;
+        static const long d_oui = 0x6a621e;
         int d_packet_class;
         pmt::pmt_t d_context_key;
         pmt::pmt_t d_pkt_n_key;
@@ -91,7 +91,7 @@ namespace gr {
      public:
       difi_sink_cpp_impl(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr, uint32_t port, uint8_t socket_type, bool mode,
                         uint32_t samples_per_packet, int stream_number, int reference_point, u_int64_t samp_rate, int packet_class,
-                        int oui, int context_interval, int context_pack_size, int bit_depth, int scaling, float gain, gr_complex offset, float max_iq, float min_iq);
+                        int context_interval, int context_pack_size, int bit_depth, int scaling, float gain, gr_complex offset, float max_iq, float min_iq);
       ~difi_sink_cpp_impl();
 
       // Where all the action really happens

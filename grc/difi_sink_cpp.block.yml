@@ -9,7 +9,7 @@ category: '[DIFI]'
 templates:
   imports: import difi
   make: difi.difi_sink_cpp_${type.fcn}(${reference_time_full}, ${reference_time_frac}, ${ip_addr}, ${port}, ${protocol}, bool(${mode}),
-                                                       ${data_size}, ${stream_id}, int(${reference_point}), ${sample_rate}, int(${packet_class}), ${oui},
+                                                       ${data_size}, ${stream_id}, int(${reference_point}), ${sample_rate}, int(${packet_class}),
                                                        ${context_packet_send_count}, int(${context_pack_size}), int(${bit_depth}), int(${scaling}), ${gain},
                                                        ${offset}, ${max_iq}, ${min_iq})
 
@@ -75,11 +75,6 @@ parameters:
   label: Packet Class
   dtype: enum
   options: ['0', '1', '2']
-  hide: ${ ('all' if mode == 'True' else 'none') }
-- id: oui
-  label: Orginization Unique ID
-  dtype: int
-  default: 0
   hide: ${ ('all' if mode == 'True' else 'none') }
 - id: context_packet_send_count
   label: Context packet interval
@@ -170,9 +165,6 @@ documentation: |-
 
      packet_class:
      The packet class of either 0, 1, or 2 (See 2.2.2 Standard Flow Signal Context Packet of the DIFI spec for details).
-
-     oui:
-     The orginizational unique identfier.
 
      context_interval:
      The number of data packets to send before sending the next context packet
