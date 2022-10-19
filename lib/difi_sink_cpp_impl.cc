@@ -133,7 +133,7 @@ namespace gr {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_gain);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_samp_rate);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_full);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], state_and_event_id);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], data_payload_format);
       }
