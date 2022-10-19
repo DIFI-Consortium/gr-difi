@@ -63,7 +63,7 @@ parameters:
 - id: stream_id
   label: Stream ID
   dtype: int
-  default: 0
+  default: 80000
   hide: ${ ('all' if mode == 'True' else 'none') }
 - id: reference_point
   label: Reference Point
