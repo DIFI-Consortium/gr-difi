@@ -790,7 +790,7 @@ class qa_testcpp(gr_unittest.TestCase):
         maxiq = 1 + np.random.random() * 10
         miniq = -1.0*(np.random.random()*10)
         bit_depth = 16
-        full_scale = 1 << bit_depth
+        full_scale = (1 << bit_depth) - 1
         gain = full_scale / (maxiq - miniq)
         offset = complex(-1.0*((maxiq - miniq)/2.0 + miniq), -
                          1.0*((maxiq - miniq)/2.0 + miniq))

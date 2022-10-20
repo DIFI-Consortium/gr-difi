@@ -149,7 +149,7 @@ namespace gr {
       }
       else if(d_scaling_mode == 2){
           //min-max
-          int full_scale = 1 << bit_depth;
+          int full_scale = (1 << bit_depth) - 1;
           float EPSILON = 0.0001;
           if ((max_iq - min_iq) < EPSILON){
             GR_LOG_ERROR(this->d_logger, "(max_iq - min_iq) too small or is negative, bailing to avoid numerical issues!");
