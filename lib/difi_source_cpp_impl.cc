@@ -282,7 +282,7 @@ namespace gr {
       auto r_bit_depth = (context.payload_format >> 32 & 0x0000001f) + 1;
       if (size_gotten != 44 and (r_bit_depth != d_unpack_idx_size * 8 or (size_gotten != 108 and size_gotten != 72)))
       {
-        std::string error_string = r_bit_depth != d_unpack_idx_size * 8 ?
+        std::string error_string = size_gotten == 108 or size_gotten == 72 ?
                                     "The context packet bit depth does not match the input bit depth, check your configuration.\nContext packet bit depth is: " + std::to_string(r_bit_depth) :
                                     "The context packet size is not 108 bits per DIFI spec. The context packet recieved size is: " + std::to_string(size_gotten);
         if (d_behavior == context_behavior::throw_exe){
