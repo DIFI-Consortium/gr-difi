@@ -1,5 +1,5 @@
 // -*- c++ -*- //
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and Welkin Sciences, LLC.
 // Licensed under the GNU General Public License v3.0 or later.
 // See License.txt in the project root for license information.
 //
