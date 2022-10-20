@@ -269,7 +269,7 @@ namespace gr {
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("rf_gain"), pmt::from_float(context.rf_gain));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("if_gain"), pmt::from_float(context.if_gain));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("samp_rate"), pmt::from_double(context.samp_rate));
-        pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("timestamp_adjustment"), pmt::from_uint64(context.t_adj));
+        pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("timestamp_adjustment"), pmt::from_long(context.t_adj));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("timestamp_calibration_time"), pmt::from_uint64(context.t_cal));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("state_and_event_indicator"), pmt::from_long(context.state_indicators));
         pmt_dict = pmt::dict_add(pmt_dict, pmt::intern("data_packet_payload_format"), pmt::from_uint64(context.payload_format));
