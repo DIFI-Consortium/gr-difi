@@ -32,11 +32,23 @@ options:
     state: enabled
 
 blocks:
+- name: amplitude
+  id: variable
+  parameters:
+    comment: ''
+    value: '127'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [288, 12.0]
+    rotation: 0
+    state: true
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: 500e3
+    value: '500000'
   states:
     bus_sink: false
     bus_source: false
@@ -49,7 +61,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amp: '127'
+    amp: amplitude
     comment: ''
     freq: '1000'
     maxoutbuf: '0'
@@ -77,12 +89,15 @@ blocks:
     context_packet_send_count: '1000'
     data_size: '128'
     ip_addr: 127.0.0.1
+    max_iq: amplitude
+    min_iq: -amplitude
     mode: 'False'
     port: '50003'
     protocol: '2'
     reference_time_frac: '0'
     reference_time_full: '0'
-    sample_rate: '100000'
+    sample_rate: samp_rate
+    scaling: '2'
     stream_id: '0'
     type: complex
   states:
@@ -324,7 +339,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [408, 508.0]
+    coordinate: [472, 516.0]
     rotation: 0
     state: true
 
