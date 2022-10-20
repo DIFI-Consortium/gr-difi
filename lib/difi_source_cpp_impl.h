@@ -27,21 +27,15 @@ class difi_source_cpp_impl : public difi_source_cpp<T>
 {
     double parse_vita_fixed_double(u_int64_t bits)
     {
-        u_int64_t int_part = bits >> 20;
-        u_int32_t frac_part = bits & 0xfffff;
-        long pow = 43;
-        double frac = 0;
-        u_int64_t full = 0;
-        while (pow > -1) {
-            full += 0x1 << pow * ((int_part >> pow) & 0x1);
-            pow--;
-        }
-        while (pow > -21) {
-            u_int64_t tmp = 0x1 << abs(pow) * ((frac_part >> 20 - pow) & 0x1);
-            frac += tmp == 0 ? tmp : 1 / tmp;
-            pow--;
-        }
-        return full + frac;
+        return (double)(bits) / (1<<20);
+    }
+    double parse_vita_fixed_double(int64_t bits)
+    {
+        return (double)(bits) / (1<<20);
+    }
+    float parse_vita_fixed_float(int16_t bits)
+    {
+        return (float)(bits) / (1<<7);
     }
     struct header_data {
         u_int16_t pkt_n;
@@ -52,19 +46,19 @@ class difi_source_cpp_impl : public difi_source_cpp<T>
 
     struct context_packet {
         u_int64_t class_id;
-        u_int32_t full;
-        u_int64_t frac;
+        u_int32_t full; //seconds
+        u_int64_t frac; //picoseconds
         u_int32_t cif;
         u_int32_t ref_point;
-        double bw;
-        u_int64_t if_ref_freq;
-        u_int64_t rf_ref_freq;
-        u_int64_t if_band_offset;
-        u_int32_t ref_lvl;
-        u_int32_t gain;
-        double samp_rate;
-        u_int64_t t_adj;
-        u_int32_t t_cal;
+        double bw; //Hertz
+        double if_ref_freq; //Hertz
+        double rf_ref_freq; //Hertz
+        double if_band_offset; //Hertz
+        float ref_lvl; //dBm
+        float rf_gain, if_gain; //dB
+        double samp_rate; //Hertz
+        int64_t t_adj; //femtoseconds
+        u_int32_t t_cal; //seconds
         u_int32_t state_indicators;
         u_int64_t payload_format;
     };
