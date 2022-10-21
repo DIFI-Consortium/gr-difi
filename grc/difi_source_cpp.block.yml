@@ -39,7 +39,7 @@ parameters:
 - id: stream_num
   label: DIFI Stream Number
   dtype: int
-  default: 0
+  default: 80000
 - id: context_behavior
   label: Context Mismatch Behavior
   category: DIFI Advanced
