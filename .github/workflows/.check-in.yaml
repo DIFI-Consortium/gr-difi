@@ -1,0 +1,38 @@
+name: CHECKIN_CI
+
+# Run this workflow every time a commit is pushed to main or a pull request is opened against main
+on:
+  push:
+    branches:
+      - main
+      - add_ci
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: gnuradio/ci:ubuntu-22.04-3.9
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Build
+        run: |
+          mkdir build; cd build; cmake ..; cmake --build . -j --config Release
+      - name: Install
+        run: |
+          cd build
+          sudo make install -j
+      - name: Update GNURadio preferences
+        run: |
+          mkdir -p "${HOME}/.gnuradio/prefs/"
+          echo "gr::vmcircbuf_sysv_shm_factory" > "${HOME}/.gnuradio/prefs/vmcircbuf_default_factory"
+      - name: Run Tests
+        run: |
+          cd build
+          export PYTHONPATH=${{ secrets.PYTHONPATH }}; export LD_LIBRARY_PATH=${{ secrets.LD_LIBRARY_PATH }};ctest -V -T test;
+        shell: bash
