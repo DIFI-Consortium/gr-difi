@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+# Copyright (c) Microsoft Corporation and Welkin Sciences, LLC.
 # Licensed under the GNU General Public License v3.0 or later.
 # See License.txt in the project root for license information.
 #
@@ -9,7 +9,7 @@ category: '[DIFI]'
 templates:
   imports: import difi
   make: difi.difi_sink_cpp_${type.fcn}(${reference_time_full}, ${reference_time_frac}, ${ip_addr}, ${port}, ${protocol}, bool(${mode}),
-                                                       ${data_size}, ${stream_id}, int(${reference_point}), ${sample_rate}, int(${packet_class}), ${oui},
+                                                       ${data_size}, ${stream_id}, ${sample_rate},
                                                        ${context_packet_send_count}, int(${context_pack_size}), int(${bit_depth}), int(${scaling}), ${gain},
                                                        ${offset}, ${max_iq}, ${min_iq})
 
@@ -51,11 +51,11 @@ parameters:
 - id: reference_time_full
   label: Reference Time Full
   dtype: int
-  default: 0
+  default: 1666209080
 - id: reference_time_frac
   label: Reference Time Frac
   dtype: int
-  default: 0
+  default: 964925050735
 - id: data_size
   label: Samples Per Packet
   dtype: int
@@ -63,23 +63,7 @@ parameters:
 - id: stream_id
   label: Stream ID
   dtype: int
-  default: 0
-  hide: ${ ('all' if mode == 'True' else 'none') }
-- id: reference_point
-  label: Reference Point
-  dtype: enum
-  options: ['352', '101']
-  option_labels: ['ADC', 'DAC']
-  hide: ${ ('all' if mode == 'True' else 'none') }
-- id: packet_class
-  label: Packet Class
-  dtype: enum
-  options: ['0', '1', '2']
-  hide: ${ ('all' if mode == 'True' else 'none') }
-- id: oui
-  label: Orginization Unique ID
-  dtype: int
-  default: 0
+  default: 80000
   hide: ${ ('all' if mode == 'True' else 'none') }
 - id: context_packet_send_count
   label: Context packet interval
@@ -90,7 +74,7 @@ parameters:
   label: The context packet size in bytes
   dtype: enum
   options: ['72', '108']
-  default: '72'
+  default: '108'
   hide: ${ ('all' if mode == 'True' else 'none') }
 - id: scaling
   category: Scaling
@@ -139,10 +123,10 @@ documentation: |-
      ===Params===
 
      reference_time_full:
-     The initial refernce time full for the DIFI (VITA) data packets until a timing tag is recieved via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode
+     The initial reference time in seconds for the DIFI (VITA) data packets until a timing tag is received via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode.
 
      reference_time_frac:
-     The initial refernce time frac for the DIFI (VITA) data packets until a timing tag is recieved via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode
+     The fractional initial reference time in picoseconds for the DIFI (VITA) data packets until a timing tag is received via pkt_n tag or a context packet tag. The time reference will never be updated if in standalone mode.
 
      ip_addr:
      The ip address for the socket that DIFI (VITA) packets will be forwared to
@@ -162,17 +146,8 @@ documentation: |-
      stream_number:
      The DIFI (VITA) stream number to expect for this stream.
 
-     reference_point:
-     The Reference point for the stream, either ADC or DAC (only used if the context packet size is 108)
-
      samp_rate:
      The sample rate
-
-     packet_class:
-     The packet class of either 0, 1, or 2 (See 2.2.2 Standard Flow Signal Context Packet of the DIFI spec for details).
-
-     oui:
-     The orginizational unique identfier.
 
      context_interval:
      The number of data packets to send before sending the next context packet

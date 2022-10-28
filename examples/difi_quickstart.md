@@ -13,12 +13,11 @@ Radio.
 DIFI sink blocks have a `mode` parameter that can be set to either "Paired" or "Standalone". In standalone mode, the
 user must specify values for fields that will be included in the DIFI packet stream metadata. Since the metadata values
 are provided by the user, the DIFI sink can be used with any normal sample source in GNU Radio, not just sources that
-generate DIFI-compliant metadata.<br>
+generate DIFI-compliant metadata.
 
 Open the [DIFI sink standalone mode example](difi_standalone.grc) in GNU Radio Companion and run the flowgraph to see
 the DIFI sink block running in standalone mode.
 
-----
 ## Run the paired DIFI source and sink example
 When using the DIFI sink in paired mode, the DIFI sink expects the input sample stream to include DIFI compliant
 metadata in stream tags, such as those produced by the DIFI source block. If the DIFI sink does not receive the metadata

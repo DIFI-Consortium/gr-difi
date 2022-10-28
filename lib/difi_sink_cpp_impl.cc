@@ -1,5 +1,5 @@
 // -*- c++ -*-
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and Welkin Sciences, LLC.
 // Licensed under the GNU General Public License v3.0 or later.
 // See License.txt in the project root for license information.
 
@@ -15,28 +15,25 @@ namespace gr {
     template <class T>
     typename difi_sink_cpp<T>::sptr
     difi_sink_cpp<T>::make(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr, uint32_t port, uint8_t socket_type,
-                          bool mode, uint32_t samples_per_packet, int stream_number, int reference_point, u_int64_t samp_rate,
-                          int packet_class, int oui, int context_interval, int context_pack_size, int bit_depth,
+                          bool mode, uint32_t samples_per_packet, int stream_number, u_int64_t samp_rate,
+                          int context_interval, int context_pack_size, int bit_depth,
                           int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
     {
       return gnuradio::make_block_sptr<difi_sink_cpp_impl<T>>(reference_time_full, reference_time_frac, ip_addr, port, socket_type, mode,
-                                                              samples_per_packet, stream_number, reference_point, samp_rate, packet_class, oui, context_interval, context_pack_size, bit_depth,
+                                                              samples_per_packet, stream_number, samp_rate, context_interval, context_pack_size, bit_depth,
                                                               scaling, gain, offset, max_iq, min_iq);
     }
 
     template <class T>
     difi_sink_cpp_impl<T>::difi_sink_cpp_impl(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr,
-                                              uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, int stream_number, int reference_point,
-                                              u_int64_t samp_rate, int packet_class, int oui, int context_interval, int context_pack_size, int bit_depth,
+                                              uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, int stream_number,
+                                              u_int64_t samp_rate, int context_interval, int context_pack_size, int bit_depth,
                                               int scaling, float gain, gr_complex offset, float max_iq, float min_iq)
       : gr::sync_block("difi_sink_cpp_impl",
               gr::io_signature::make(1, 1, sizeof(T)),
               gr::io_signature::make(0, 0, 0)),
               d_stream_number(int(stream_number)),
-              d_reference_point(reference_point),
               d_full_samp(samp_rate),
-              d_oui(oui),
-              d_packet_class(packet_class),
               d_pkt_n(0),
               d_current_buff_idx(0),
               d_pcks_since_last_reference(0),
@@ -70,20 +67,21 @@ namespace gr {
       d_static_change_key = pmt::intern("static_change");
       d_full = reference_time_full;
       d_frac = reference_time_frac;
-      d_static_bits = 0x18e00000; // default, will change after first packet else, this is the DIFI standard first 12 bits
-      d_context_static_bits = 0x49000000;// default, will change after first packet else, this is the DIFI standard first 8 bits
+      d_static_bits = 0x18e00000; // header bits 31-20 must be 0x18e (posix), 0x18a (gps), or 0x186 (utc)
+      d_context_static_bits = 0x49e00000;// header bits 31-20 must be 0x49e (posix), 0x49a (gps), or 0x496 (utc)
       d_unpack_idx_size = bit_depth == 8 ? 1 : 2;
       d_samples_per_packet = samples_per_packet;
       d_time_adj = (double)d_samples_per_packet / samp_rate;
       d_data_len = samples_per_packet * d_unpack_idx_size * 2;
-      u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len / 4);
+      u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       u_int32_t tmp_header_context = d_context_static_bits ^ d_context_packet_count << 16 ^ (context_pack_size  / 4);
-      u_int64_t class_id = d_oui << 32 ^ d_packet_class;
+      u_int64_t d_class_id = d_oui << 32;
+      u_int64_t d_context_class_id = d_class_id ^ 1;
       d_raw.resize(difi::DIFI_HEADER_SIZE);
       pack_u32(&d_raw[0], tmp_header_data);
       pack_u32(&d_raw[4], d_stream_number);
       int idx = 0;
-      pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], class_id);
+      pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_class_id);
       pack_u32(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
       pack_u64(&d_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
 
@@ -92,14 +90,24 @@ namespace gr {
       pack_u32(&d_context_raw[0], tmp_header_context);
       pack_u32(&d_context_raw[4], d_stream_number);
       idx = 0;
-      pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], class_id);
+      pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_context_class_id);
       // this is static since only 8 or 16 bit signed complex cartesian is supported for now and item packing is always link efficient
       // see 2.2.2 Standard Flow Signal Context Packet in the DIFI spec for complete information
       u_int64_t data_payload_format = bit_depth == 8 ? difi::EIGHT_BIT_SIGNED_CART_LINK_EFF : difi::SIXTEEN_BIT_SIGNED_CART_LINK_EFF;
 
       u_int32_t state_and_event_id =difi::DEFAULT_STATE_AND_EVENTS; // default no events or state values. See 7.1.5.17 The State and Event Indicator Field of the VITA spec
       u_int64_t to_vita_bw = u_int64_t(samp_rate * .8) << 20; // no fractional bw or samp rate supported in gnuradio, see 2.2.2 Standard Flow Signal Context Packet for bandwidth information
+      u_int64_t to_vita_if_band_offset= int64_t(samp_rate * -0.1) << 20; //generic IF band offset (1Hz resolution)
       u_int64_t to_vita_samp_rate = samp_rate << 20;
+      u_int64_t to_vita_if_ref_freq = 100000000UL << 20; //generic 100MHz IF reference frequency
+      u_int64_t to_vita_rf_ref_freq = 7500000000UL << 20; //generic 7.5GHz RF reference frequency
+      u_int64_t to_vita_ref_level = 20 << 7; //generic 20dBm reference level
+      double rf_gain_dB=14.2, if_gain_dB=-1.3; //generic two-stage (RF then IF) gains/attenuations
+      int32_t to_vita_rf_gain = rf_gain_dB * (1<<7);
+      int32_t to_vita_if_gain = if_gain_dB * (1<<7);
+      int32_t to_vita_gain = to_vita_if_gain << 16 ^ to_vita_rf_gain;
+      double delay_sec = 1e-5; //generic 10 microsecond timestamp adjustment
+      int64_t to_vita_delay = delay_sec * 1e15; //convert to femtoseconds
       if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
       {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_ALT_OFFSETS[idx++]], 966885376U);
@@ -116,17 +124,17 @@ namespace gr {
       {
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], reference_point);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0xfbb98000u);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0x64u);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_bw);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], samp_rate);
-        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
-        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], 0);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_if_ref_freq);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_rf_ref_freq);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_if_band_offset);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_ref_level);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_gain);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_samp_rate);
+        pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], to_vita_delay);
+        pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], d_full);
         pack_u32(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], state_and_event_id);
         pack_u64(&d_context_raw[difi::CONTEXT_PACKET_OFFSETS[idx++]], data_payload_format);
       }
@@ -141,7 +149,7 @@ namespace gr {
       }
       else if(d_scaling_mode == 2){
           //min-max
-          int full_scale = 1 << bit_depth;
+          int full_scale = (1 << bit_depth) - 1;
           float EPSILON = 0.0001;
           if ((max_iq - min_iq) < EPSILON){
             GR_LOG_ERROR(this->d_logger, "(max_iq - min_iq) too small or is negative, bailing to avoid numerical issues!");
@@ -280,7 +288,7 @@ namespace gr {
       std::tie(full, frac) = add_frac_full();
       u_int32_t header = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       pack_u32(&to_send[0], header);
-      std::copy(d_raw.begin() + 8, d_raw.begin() + 16, to_send.begin() + 8);
+      std::copy(d_raw.begin() + 4, d_raw.begin() + 16, to_send.begin() + 4);
       pack_u32(&to_send[16], full);
       pack_u64(&to_send[20], frac);
       std::copy(d_out_buf.begin(), d_out_buf.end(), to_send.begin() + difi::DIFI_HEADER_SIZE);

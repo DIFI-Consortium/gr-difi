@@ -56,11 +56,8 @@ blocks:
     data_size: '255'
     ip_addr: 127.0.0.1
     mode: 'True'
-    oui: '0'
-    packet_class: '0'
     port: '50003'
     protocol: '1'
-    reference_point: '101'
     reference_time_frac: '0'
     reference_time_full: '18000'
     sample_rate: '100000'

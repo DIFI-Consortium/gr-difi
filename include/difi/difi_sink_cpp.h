@@ -1,5 +1,5 @@
 // -*- c++ -*- //
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation and Welkin Sciences, LLC.
 // Licensed under the GNU General Public License v3.0 or later.
 // See License.txt in the project root for license information.
 //
@@ -20,7 +20,7 @@ namespace gr {
       typedef std::shared_ptr<difi_sink_cpp<T>> sptr;
       
       static sptr make(u_int32_t reference_time_full, u_int64_t reference_time_frac, std::string ip_addr, uint32_t port, uint8_t socket_type, bool mode, uint32_t samples_per_packet, 
-                      int stream_number, int reference_point, u_int64_t samp_rate, int packet_class, int oui, int context_interval, int context_pack_size, int bit_depth, 
+                      int stream_number, u_int64_t samp_rate, int context_interval, int context_pack_size, int bit_depth,
                       int scaling, float gain, gr_complex offset, float max_iq, float min_iq);
     };
     typedef difi_sink_cpp<gr_complex> difi_sink_cpp_fc32;
