@@ -15,7 +15,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: gnuradio/ci:ubuntu-22.04-3.9
+      image: pomarosa/gnuradio:3.9-ubuntu20
     timeout-minutes: 15
 
     steps:
@@ -26,13 +26,9 @@ jobs:
       - name: Install
         run: |
           cd build
-          sudo make install -j
-      - name: Update GNURadio preferences
-        run: |
-          mkdir -p "${HOME}/.gnuradio/prefs/"
-          echo "gr::vmcircbuf_sysv_shm_factory" > "${HOME}/.gnuradio/prefs/vmcircbuf_default_factory"
+          make install -j
       - name: Run Tests
         run: |
           cd build
-          export PYTHONPATH=${{ secrets.PYTHONPATH }}; export LD_LIBRARY_PATH=${{ secrets.LD_LIBRARY_PATH }};ctest -V -T test;
+          export LD_LIBRARY_PATH=${{ secrets.LD_LIBRARY_PATH }};ctest -V -T test;
         shell: bash
