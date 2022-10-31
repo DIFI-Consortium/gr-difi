@@ -1,0 +1,33 @@
+name: CHECKIN_CI
+
+# Run this workflow every time a commit is pushed to main or a pull request is opened against main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: pomarosa/gnuradio:3.9-ubuntu20
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Build
+        run: |
+          mkdir build; cd build; cmake ..; cmake --build . -j --config Release
+      - name: Install
+        run: |
+          cd build
+          make install -j
+      - name: Run Tests
+        run: |
+          cd build
+          export LD_LIBRARY_PATH=${{ secrets.LD_LIBRARY_PATH }};ctest -V -T test;
+        shell: bash
