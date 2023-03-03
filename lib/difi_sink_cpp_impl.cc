@@ -84,7 +84,7 @@ namespace gr {
       u_int64_t d_class_id;
       if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
       {
-        d_class_id = 0x7c386c << 32; // This is the OUI that is required for the non-compliant hardware device
+        d_class_id = d_alt_oui << 32; // This is the OUI that is required for the non-compliant hardware device
       } else {
         d_class_id = d_oui << 32;
       }
