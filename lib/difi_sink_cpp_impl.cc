@@ -68,14 +68,26 @@ namespace gr {
       d_full = reference_time_full;
       d_frac = reference_time_frac;
       d_static_bits = 0x18e00000; // header bits 31-20 must be 0x18e (posix), 0x18a (gps), or 0x186 (utc)
-      d_context_static_bits = 0x49e00000;// header bits 31-20 must be 0x49e (posix), 0x49a (gps), or 0x496 (utc)
+      if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
+      {
+        d_context_static_bits = 0x49000000;// header bits 31-20 must be 0x49e (posix), 0x49a (gps), or 0x496 (utc)
+      }
+      else {
+        d_context_static_bits = 0x49e00000;// header bits 31-20 must be 0x49e (posix), 0x49a (gps), or 0x496 (utc)
+      }
       d_unpack_idx_size = bit_depth == 8 ? 1 : 2;
       d_samples_per_packet = samples_per_packet;
       d_time_adj = (double)d_samples_per_packet / samp_rate;
       d_data_len = samples_per_packet * d_unpack_idx_size * 2;
       u_int32_t tmp_header_data = d_static_bits ^ d_pkt_n << 16 ^ (d_data_len + difi::DIFI_HEADER_SIZE) / 4;
       u_int32_t tmp_header_context = d_context_static_bits ^ d_context_packet_count << 16 ^ (context_pack_size  / 4);
-      u_int64_t d_class_id = d_oui << 32;
+      u_int64_t d_class_id;
+      if(context_pack_size == 72)// this check is a temporary work around for a non-compliant hardware device
+      {
+        d_class_id = 0x007c386c << 32; // This is the OUI that is required for the non-compliant hardware device
+      else {
+        d_class_id = d_oui << 32;
+      }
       u_int64_t d_context_class_id = d_class_id ^ 1;
       d_raw.resize(difi::DIFI_HEADER_SIZE);
       pack_u32(&d_raw[0], tmp_header_data);
