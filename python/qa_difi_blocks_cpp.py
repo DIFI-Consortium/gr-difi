@@ -1043,7 +1043,9 @@ def socket_rec_confirm_context_correct_alt(server, socket_type, sample_rate, exp
     assert bit_depth + 1 == expect_bit_depth
     assert sample_rate == r_samp_rate
     assert int(sample_rate * .8) == r_bw
-    assert r_oui == 0x6a621e
+    # DIFI spec 1.0 oui 0x7C386C was the default, check for
+    # both depending on the context packet size
+    assert r_oui == 0x6a621e or r_oui == 0x7C386C
     assert r_packet_class_id == 1
 
 
