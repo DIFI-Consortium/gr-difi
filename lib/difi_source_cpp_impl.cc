@@ -78,8 +78,8 @@ namespace gr {
         p_udpsocket = new udp_socket(ip_addr,port,true);
       }
 
-      d_packet_buffer.resize(9000);
-      this->set_output_multiple(9000);
+      d_packet_buffer.resize(PKT_BUF_SIZE);
+      this->set_output_multiple(PKT_BUF_SIZE);
       d_unpack_idx_size = bit_depth == 8 ? 1 : 2;
 
       d_unpacker = unpack_16<T>;

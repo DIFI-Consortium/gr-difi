@@ -129,6 +129,7 @@ public:
              gr_vector_void_star& output_items);
     static const uint VITA_PKT_MOD = 16;
     static const uint MS_DATA_VITA_HEADER = 0x18;
+    static const uint PKT_BUF_SIZE = 65507;
 };
 
 } // namespace difi
