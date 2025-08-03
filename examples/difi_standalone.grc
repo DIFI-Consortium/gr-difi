@@ -23,6 +23,7 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: DIFI Standalone Example
+    window_size: (1000,1000)
   states:
     bus_sink: false
     bus_source: false
@@ -69,6 +70,7 @@ blocks:
     offset: '0'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: complex
     waveform: analog.GR_SIN_WAVE
   states:
@@ -76,6 +78,27 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [96, 236.0]
+    rotation: 0
+    state: enabled
+- name: blocks_throttle2_0
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [408, 268.0]
     rotation: 0
     state: enabled
 - name: difi_sink_cpp_0
@@ -88,10 +111,12 @@ blocks:
     context_pack_size: '108'
     context_packet_send_count: '1000'
     data_size: '128'
+    gain: '1.0'
     ip_addr: 127.0.0.1
     max_iq: amplitude
     min_iq: -amplitude
     mode: 'False'
+    offset: '0'
     port: '50003'
     protocol: '2'
     reference_time_frac: '0'
@@ -114,12 +139,12 @@ blocks:
     alias: ''
     bit_depth: '8'
     comment: ''
+    context_behavior: '0'
     ip_addr: 127.0.0.1
     maxoutbuf: '0'
     minoutbuf: '0'
     port: '50003'
     protocol: '2'
-    socket_buffer_size: '4096'
     stream_num: '0'
     type: complex
   states:
@@ -127,25 +152,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [80, 492.0]
-    rotation: 0
-    state: enabled
-- name: blocks_throttle_0
-  id: blocks_throttle
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [400, 292.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -344,10 +350,11 @@ blocks:
     state: true
 
 connections:
-- [analog_sig_source_x_0, '0', blocks_throttle_0, '0']
+- [analog_sig_source_x_0, '0', blocks_throttle2_0, '0']
+- [blocks_throttle2_0, '0', difi_sink_cpp_0, '0']
+- [blocks_throttle2_0, '0', qtgui_time_sink_x_0, '0']
 - [difi_source_cpp_0_0, '0', qtgui_time_sink_x_0_0, '0']
-- [blocks_throttle_0, '0', difi_sink_cpp_0, '0']
-- [blocks_throttle_0, '0', qtgui_time_sink_x_0, '0']
 
 metadata:
   file_format: 1
+  grc_version: 3.10.9.2

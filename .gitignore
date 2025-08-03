@@ -4,3 +4,4 @@
 build*/
 examples/grc/*.py
 .venv/*
+examples/DIFI_STAND_ALONE_EXAMPLE.py
