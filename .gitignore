@@ -5,5 +5,5 @@ build*/
 examples/grc/*.py
 .venv/*
 examples/pn11_over_difi.py
-examples/pn11_over_difi_epy_block_0.py
-examples/pn11_over_difi_epy_block_1.py
+examples/*_epy_block_*.py
+
