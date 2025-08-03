@@ -105,19 +105,22 @@ At this point the OOT module should have been installed, and you should see addi
 ### Running the Unit Tests
 
 If you would like to run the QA tests, there are two methods:
- 1. From within the build directory, run:
-    ```
-    make test
-    ```
 
-    You can review detailed test output (including any failures) in Testing/Temporary/LastTest.log.
+1. From within the build directory, run:
 
- 2. From within the python directory, run:
-    ```
-    python -m pytest qa_*
-    ```
+   ```bash
+   make test
+   ```
 
-    Pytest will show detailed test results directly in the output of this command.
+   You can review detailed test output (including any failures) in Testing/Temporary/LastTest.log.
+
+2. From within the python directory, run:
+
+   ```bash
+   python -m pytest qa_*
+   ```
+
+   Pytest will show detailed test results directly in the output of this command.
 
 ### Resolutions to Common Problems During Installation and Tests
 
