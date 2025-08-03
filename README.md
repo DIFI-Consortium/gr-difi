@@ -2,8 +2,8 @@
 
 The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Module allows users to communicate with [DIFI](https://dificonsortium.org/about/) devices by streaming and receiving DIFI samples within a GNU Radio flowgraph.
 
-
 ## Table of Contents
+
 - [DIFI Blocks using the IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard](#difi-blocks-using-the-ieee-isto-std-4900-2021-digital-if-interoperability-standard)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -15,6 +15,7 @@ The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Mod
 - [License](#license)
 
 ## DIFI Blocks Using the IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard
+
 This is a set of GNU Radio blocks based on IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard version 1.0.
 
 There are two DIFI blocks (source and sink) as part of this OOT module. The Bit Depths currently supported are 8 and 16 with upcoming support for the full range of bit depths specified in the DIFI standard.
@@ -47,14 +48,14 @@ There are two DIFI blocks (source and sink) as part of this OOT module. The Bit 
 
 For a brief tutorial on using these blocks, see the [DIFI Examples](./examples/README.md#difi-examples).
 
-
 ## Getting Started
 
 The following installation instructions will get you up and running with the DIFI OOT Module on your local machine.
 
 ### Prerequisites
+
 This project depends on the GNU Radio 3.9.x or 3.10.x runtime and development dependencies. See the [GNU Radio installation instructions](https://wiki.gnuradio.org/index.php/InstallingGR#From_Binaries) for steps on
-installing GNU Radio from binaries (note that GNU Radio packaged with Ubuntu 20 is only 3.8). Some package managers do not automatically install all of the development dependencies,
+installing GNU Radio from binaries. On Ubuntu 24 you can install it with `sudo apt install gnuradio` and it will install version 3.10.  Some package managers do not automatically install all of the development dependencies,
 so you may need to separately install and configure some of them. The DIFI OOT module requires the following:
 
 - GNU Radio 3.9.x or 3.10.x
@@ -69,29 +70,40 @@ See the installation steps below for how to install these dependencies.
 
 ### Installing DIFI OOT
 
-The following steps show how to install this OOT module on a Debian-based OS with GNU Radio already installed.  They have been tested to work under Ubuntu 20.  If you see error messages after running any of the following steps, stop and check our [FAQ](./docs/FAQ.md) for how to
+The following steps show how to install this OOT module on a Debian-based OS with GNU Radio already installed.  They have been tested to work under Ubuntu 20 and 24.  If you see error messages after running any of the following steps, stop and check our [FAQ](./docs/FAQ.md) for how to
 resolve the problem.
+
+On Ubuntu 20 only you will need to do:
 
 ```bash
 sudo apt-get install python3-pip cmake liborc-dev doxygen
 sudo pip install pytest pybind11
+```
 
+If you're using Ubuntu 24 through WSL, for graphical GRC to work you will want:
+
+```bash
+sudo apt install python3-gi gir1.2-gtk-3.0
+```
+
+```bash
 git clone https://github.com/DIFI-Consortium/gr-difi
 cd gr-difi
 
 mkdir build
 cd build
 cmake ..
-make -j4
+make -j $(nproc)
 sudo make install
 sudo ldconfig
 ```
 
 (If you run into a non-existent path error after `cmake ..`, try recreating your build directory and use `cmake -DCMAKE_FIND_ROOT_PATH=/usr ..` instead)
 
-At this point the OOT module should have been installed, and you should see additional blocks within GNU Radio Companion.
+At this point the OOT module should have been installed, and you should see additional blocks within GNU Radio Companion which you can open using `gnuradio-companion`.  Try opening one of the example .grc files in /examples of this repo.
 
 ### Running the Unit Tests
+
 If you would like to run the QA tests, there are two methods:
  1. From within the build directory, run:
     ```
@@ -108,15 +120,16 @@ If you would like to run the QA tests, there are two methods:
     Pytest will show detailed test results directly in the output of this command.
 
 ### Resolutions to Common Problems During Installation and Tests
+
 For a list common problems and resolutions, please check our [FAQ](./docs/FAQ.md) to see if your issue has been addressed.
 
 ## Examples
+
 The [examples](./examples) folder has a collection of flowgraphs and supporting files that illustrate common ways of
 using the blocks provided in this module. See the [README in the examples folder](./examples/README.md) to get started.
 
-
-
 ## Frequently Asked Questions
+
 For a list of common questions, including problems and resolutions, please check our [FAQ](./docs/FAQ.md)
 
 ## Support
