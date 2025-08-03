@@ -244,36 +244,35 @@ blocks:
 - name: epy_block_4
   id: epy_block
   parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
-      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self):\
-      \  # only default arguments here\n        \"\"\"arguments to this function show\
-      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
-      \   self,\n            name='PN11 BER',\n            in_sig=[np.uint8],\n  \
-      \          out_sig=[]\n        )\n        self.nbits = 0.0\n        self.nerrs\
-      \ = 0.0\n        self.i = 0\n        self.reg = 0x400 # seed, must be a non-zero\
-      \ 11-bit integer (1 to 2046)\n\n    def work(self, input_items, output_items):\n\
-      \        inb = input_items[0]\n        gen = np.zeros(len(inb), dtype=np.uint8)\n\
-      \        for i in range(len(inb)):\n            #gen[i] = self.reg & 0x01  #\
-      \ Output LSB\n            gen[i] = (self.reg >> 10) & 1\n\n            # Feedback\
-      \ = XOR of bit 11 and bit 9\n            bit_11 = (self.reg >> 10) & 0x01\n\
-      \            bit_9 = (self.reg >> 8) & 0x01\n            new_bit = bit_11 ^\
-      \ bit_9\n\n            # Shift register: shift right and insert new bit at MSB\n\
-      \            #self.reg = ((self.reg >> 1) | (new_bit << 10)) & 0x7FF  # Mask\
-      \ to 11 bits\n            self.reg = ((self.reg << 1) & 0x7FF) | new_bit\n \
-      \       \n        \n        self.nerrs += np.sum(np.bitwise_xor(inb, gen).astype('float32'))\n\
-      \        self.nbits += len(inb)\n        self.i += 1\n        if self.nbits\
-      \ > 0 and self.i > 100:\n            print(\"NBits: %d \\tNErrs: %d \\tBER:\
-      \ %f\"%(int(self.nbits), int(self.nerrs), self.nerrs/self.nbits))\n        \
-      \    self.i = 0\n        return len(inb)\n"
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass pn11_ber(gr.sync_block):\n\
+      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='PN11 BER',\n            in_sig=[np.uint8],\n            out_sig=[]\n\
+      \        )\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i\
+      \ = 0\n        self.n_calls = 0\n        self.pn_length = 2047  # Length of\
+      \ PN11 sequence: 2^11 - 1\n        \n        # Generate PN11 sequence twice\
+      \ so that we dont have to wrap around\n        # (each call to work we will\
+      \ process at most pn_length bits)\n        self.seq = np.zeros(self.pn_length\
+      \ * 2, dtype=np.uint8)\n        reg = 0x400  # seed (non-zero 11-bit integer)\n\
+      \        for i in range(self.pn_length * 2):\n            self.seq[i] = (reg\
+      \ >> 10) & 1\n            bit_11 = (reg >> 10) & 0x01\n            bit_9 = (reg\
+      \ >> 8) & 0x01\n            new_bit = bit_11 ^ bit_9\n            reg = ((reg\
+      \ << 1) & 0x7FF) | new_bit\n            \n        print(self.seq[0:20])\n  \
+      \      print(self.seq[2047:2067])\n\n    def work(self, input_items, output_items):\n\
+      \        N = min(len(input_items[0]), self.pn_length)\n        sub_seq = self.seq[self.i:self.i\
+      \ + N]\n        self.i += N\n        self.i %= self.pn_length\n\n        # Calculate\
+      \ errors and bits processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
+      \ sub_seq).astype('float32'))\n        self.nbits += N\n        self.n_calls\
+      \ += 1\n        if self.n_calls > 100: # too many prints otherwise, will slow\
+      \ down GR\n            print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
+      \ \\tBER: {self.nerrs / self.nbits:.6f}\")\n            self.n_calls = 0\n\n\
+      \        return N\n"
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
-    _io_cache: ('PN11 BER', 'blk', [], [('0', 'byte', 1)], [], 'Embedded Python Block
-      example - a simple multiply const', [])
+    _io_cache: ('PN11 BER', 'pn11_ber', [], [('0', 'byte', 1)], [], '', [])
     bus_sink: false
     bus_source: false
     bus_structure: null

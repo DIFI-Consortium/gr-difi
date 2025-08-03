@@ -255,16 +255,18 @@ blocks:
     _source_code: "from gnuradio import gr\nimport numpy as np\n\nclass pn11_source(gr.sync_block):\n\
       \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
       \ name=\"PN11 Gen\",\n            in_sig=None,\n            out_sig=[np.uint8])\n\
-      \        self.reg = 0x400 # seed, must be a non-zero 11-bit integer (1 to 2046)\n\
-      \n    def work(self, input_items, output_items):\n        out = output_items[0]\n\
-      \        for i in range(len(out)):\n            #out[i] = self.reg & 0x01  #\
-      \ Output LSB\n            out[i] = (self.reg >> 10) & 1\n\n            # Feedback\
-      \ = XOR of bit 11 and bit 9\n            bit_11 = (self.reg >> 10) & 0x01\n\
-      \            bit_9 = (self.reg >> 8) & 0x01\n            new_bit = bit_11 ^\
-      \ bit_9\n\n            # Shift register: shift right and insert new bit at MSB\n\
-      \            #self.reg = ((self.reg >> 1) | (new_bit << 10)) & 0x7FF  # Mask\
-      \ to 11 bits\n            self.reg = ((self.reg << 1) & 0x7FF) | new_bit\n \
-      \       return len(out)\n"
+      \        \n        self.length = 2047  # Length of PN11 sequence: 2^11 - 1\n\
+      \        self.seq = np.zeros(self.length, dtype=np.uint8)\n        \n      \
+      \  # Generate PN11 sequence once\n        reg = 0x400  # seed (non-zero 11-bit\
+      \ integer)\n        for i in range(self.length):\n            self.seq[i] =\
+      \ (reg >> 10) & 1\n            bit_11 = (reg >> 10) & 0x01\n            bit_9\
+      \ = (reg >> 8) & 0x01\n            new_bit = bit_11 ^ bit_9\n            reg\
+      \ = ((reg << 1) & 0x7FF) | new_bit\n        \n        self.idx = 0  # Current\
+      \ index in sequence\n\n    def work(self, input_items, output_items):\n    \
+      \    out = output_items[0]\n        n = len(out)\n        \n        # Copy precomputed\
+      \ PN sequence to output, wrap around if needed\n        for i in range(n):\n\
+      \            out[i] = self.seq[self.idx]\n            self.idx = (self.idx +\
+      \ 1) % self.length\n        \n        return n\n\n"
     affinity: ''
     alias: ''
     comment: repeats every 2047 bits
