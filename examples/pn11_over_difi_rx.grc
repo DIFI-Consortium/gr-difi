@@ -85,7 +85,7 @@ blocks:
     comment: 'symbol sync likes the
 
       signal to be close to -1 to +1'
-    const: 1/45
+    const: 1/127
     maxoutbuf: '0'
     minoutbuf: '0'
     type: complex
@@ -136,7 +136,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    bit_depth: '16'
+    bit_depth: '8'
     comment: ''
     context_behavior: '0'
     ip_addr: 127.0.0.1
@@ -184,7 +184,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1008, 136.0]
+    coordinate: [1024, 152.0]
     rotation: 0
     state: enabled
 - name: digital_symbol_sync_xx_0
@@ -211,7 +211,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [656, 156.0]
+    coordinate: [680, 172.0]
     rotation: 0
     state: enabled
 - name: epy_block_2
@@ -549,7 +549,7 @@ blocks:
     bus_structure: null
     coordinate: [496, 436.0]
     rotation: 0
-    state: disabled
+    state: enabled
 
 connections:
 - [blocks_multiply_const_vxx_0_0, '0', digital_symbol_sync_xx_0, '0']
