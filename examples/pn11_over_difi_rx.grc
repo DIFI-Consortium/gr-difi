@@ -256,8 +256,8 @@ blocks:
       \        for i in range(self.pn_length * 2):\n            self.seq[i] = (reg\
       \ >> 10) & 1\n            bit_11 = (reg >> 10) & 0x01\n            bit_9 = (reg\
       \ >> 8) & 0x01\n            new_bit = bit_11 ^ bit_9\n            reg = ((reg\
-      \ << 1) & 0x7FF) | new_bit\n            \n        print(self.seq[0:20])\n  \
-      \      print(self.seq[2047:2067])\n\n    def work(self, input_items, output_items):\n\
+      \ << 1) & 0x7FF) | new_bit\n            \n        # sanity check\n        print(self.seq[0:20])\n\
+      \        print(self.seq[2047:2067])\n\n    def work(self, input_items, output_items):\n\
       \        N = min(len(input_items[0]), self.pn_length)\n        sub_seq = self.seq[self.i:self.i\
       \ + N]\n        self.i += N\n        self.i %= self.pn_length\n\n        # Calculate\
       \ errors and bits processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
