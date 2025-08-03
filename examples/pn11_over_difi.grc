@@ -131,7 +131,7 @@ blocks:
     bus_structure: null
     coordinate: [1552, 220.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_char_to_float_0_0
   id: blocks_char_to_float
   parameters:
@@ -148,7 +148,7 @@ blocks:
     bus_structure: null
     coordinate: [1568, 292.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_message_debug_0
   id: blocks_message_debug
   parameters:
@@ -256,24 +256,6 @@ blocks:
     coordinate: [1688, 508.0]
     rotation: 0
     state: enabled
-- name: blocks_skiphead_1
-  id: blocks_skiphead
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_items: '0'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [264, 220.0]
-    rotation: 0
-    state: enabled
 - name: blocks_throttle2_0
   id: blocks_throttle2
   parameters:
@@ -292,7 +274,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 172.0]
+    coordinate: [192, 196.0]
     rotation: 0
     state: enabled
 - name: blocks_unpack_k_bits_bb_0
@@ -323,7 +305,7 @@ blocks:
 
       (2 bits per symbol but 4 samples per symbol)'
     context_pack_size: '108'
-    context_packet_send_count: '1000'
+    context_packet_send_count: '10'
     data_size: '128'
     gain: '1.0'
     ip_addr: 127.0.0.1
@@ -332,10 +314,10 @@ blocks:
     mode: 'False'
     offset: '0'
     port: '50003'
-    protocol: '2'
+    protocol: '1'
     reference_time_frac: '0'
     reference_time_full: '0'
-    sample_rate: samp_rate*2
+    sample_rate: samp_rate
     scaling: '0'
     stream_id: '0'
     type: complex
@@ -345,7 +327,7 @@ blocks:
     bus_structure: null
     coordinate: [1072, 20.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: difi_source_cpp_0_0
   id: difi_source_cpp
   parameters:
@@ -358,7 +340,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     port: '50003'
-    protocol: '2'
+    protocol: '1'
     stream_num: '0'
     type: complex
   states:
@@ -367,7 +349,7 @@ blocks:
     bus_structure: null
     coordinate: [120, 436.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: digital_constellation_decoder_cb_0
   id: digital_constellation_decoder_cb
   parameters:
@@ -451,112 +433,6 @@ blocks:
     coordinate: [696, 404.0]
     rotation: 0
     state: enabled
-- name: epy_block_0
-  id: epy_block
-  parameters:
-    _source_code: "\"\"\"\nWritten by Marc, adapted from gr-vt\n\"\"\"\n\nimport numpy\
-      \ as np\nfrom gnuradio import gr\nimport operator,copy\nfrom functools import\
-      \ reduce\n\nclass prbs_base:\n    modes = {\n        \"PRBS7\":[0,6,7],\n  \
-      \      \"PRBS15\":[0,14,15],\n        \"PRBS23\":[0,18,23],\n        \"PRBS31\"\
-      :[0,28,31]\n        }\n\n    def __init__(self, which_mode = \"PRBS7\"):\n \
-      \       # https://en.wikipedia.org/wiki/Pseudorandom_binary_sequence\n     \
-      \   self.gen_poly = self.modes[which_mode]\n        self.reg  = np.ones([max(self.gen_poly)+1],\
-      \ dtype='uint8')\n        self.reg[0::4] = 0  # pick a seed that likely doesnt\
-      \ start with long strings of 0s or 1s for sanity sake\n        self.init_reg\
-      \ = copy.copy(self.reg)\n        self.idx = 0\n        self.reset_len = 100000\n\
-      \        self.pregen()\n\n    def pregen(self):\n        self.pre = self.gen_n(self.reset_len,\
-      \ lookup=False)\n\n    def gen_n_nocheck(self, n=1000):\n        o = np.zeros([n],dtype='uint8')\n\
-      \        for i in range(0, n):\n            nv = reduce(operator.xor, map(lambda\
-      \ x: self.reg[x], self.gen_poly[1:]))\n            self.reg[1:] = self.reg[0:-1]\n\
-      \            self.reg[0] = nv\n            o[i] = nv\n        return o\n\n \
-      \   def gen_n_nocheck2(self, n=1000):\n        return self.pre[self.idx:self.idx+n]\n\
-      \n    def gen_n(self, n=1000, lookup=True):\n        o = np.array([],dtype='int8')\n\
-      \        while n > 0:\n            nout = min(n,self.reset_len-self.idx)\n \
-      \           if lookup:\n                o = np.concatenate([o, self.gen_n_nocheck2(nout)])\n\
-      \            else:\n                o = np.concatenate([o, self.gen_n_nocheck(nout)])\n\
-      \            self.idx += nout\n            n -= nout\n            if self.idx\
-      \ == self.reset_len:\n                self.reg[:] = self.init_reg[:]\n     \
-      \           self.idx = 0\n        return o\n        \n\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    def\
-      \ __init__(self, padding=128):  # only default arguments here\n        gr.sync_block.__init__(\n\
-      \            self,\n            name='PRBS7',\n            in_sig=[],\n    \
-      \        out_sig=[np.uint8]\n        )\n        self.base = prbs_base(\"PRBS7\"\
-      )\n        self.first_work = True\n        self.leading_zeros = padding # samples\n\
-      \n    def work(self, input_items, output_items):\n        out = output_items[0]\n\
-      \        nout = len(out)\n        if self.first_work:\n            if nout <\
-      \ self.leading_zeros:\n                return 0\n            else:\n       \
-      \         out[0:self.leading_zeros] = np.zeros(self.leading_zeros, dtype=np.uint8)\n\
-      \                self.first_work = False\n                return self.leading_zeros\n\
-      \        gen = self.base.gen_n(nout)\n        out[:] = gen[:]\n        return\
-      \ nout\n\n\n\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    padding: '0'
-  states:
-    _io_cache: ('PRBS7', 'blk', [('padding', '128')], [], [('0', 'byte', 1)], '',
-      [])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [32, 268.0]
-    rotation: 0
-    state: disabled
-- name: epy_block_1
-  id: epy_block
-  parameters:
-    _source_code: "\"\"\"\nWritten by Marc, adapted from gr-vt\n\"\"\"\n\nimport numpy\
-      \ as np\nfrom gnuradio import gr\nimport operator,copy\nfrom functools import\
-      \ reduce\n\nclass prbs_base:\n    modes = {\n        \"PRBS7\":[0,6,7],\n  \
-      \      \"PRBS15\":[0,14,15],\n        \"PRBS23\":[0,18,23],\n        \"PRBS31\"\
-      :[0,28,31]\n        }\n\n    def __init__(self, which_mode = \"PRBS7\"):\n \
-      \       # https://en.wikipedia.org/wiki/Pseudorandom_binary_sequence\n     \
-      \   self.gen_poly = self.modes[which_mode]\n        self.reg  = np.ones([max(self.gen_poly)+1],\
-      \ dtype='uint8')\n        self.reg[0::4] = 0  # pick a seed that likely doesnt\
-      \ start with long strings of 0s or 1s for sanity sake\n        self.init_reg\
-      \ = copy.copy(self.reg)\n        self.idx = 0\n        self.reset_len = 100000\n\
-      \        self.pregen()\n\n    def pregen(self):\n        self.pre = self.gen_n(self.reset_len,\
-      \ lookup=False)\n\n    def gen_n_nocheck(self, n=1000):\n        o = np.zeros([n],dtype='uint8')\n\
-      \        for i in range(0, n):\n            nv = reduce(operator.xor, map(lambda\
-      \ x: self.reg[x], self.gen_poly[1:]))\n            self.reg[1:] = self.reg[0:-1]\n\
-      \            self.reg[0] = nv\n            o[i] = nv\n        return o\n\n \
-      \   def gen_n_nocheck2(self, n=1000):\n        return self.pre[self.idx:self.idx+n]\n\
-      \n    def gen_n(self, n=1000, lookup=True):\n        o = np.array([],dtype='int8')\n\
-      \        while n > 0:\n            nout = min(n,self.reset_len-self.idx)\n \
-      \           if lookup:\n                o = np.concatenate([o, self.gen_n_nocheck2(nout)])\n\
-      \            else:\n                o = np.concatenate([o, self.gen_n_nocheck(nout)])\n\
-      \            self.idx += nout\n            n -= nout\n            if self.idx\
-      \ == self.reset_len:\n                self.reg[:] = self.init_reg[:]\n     \
-      \           self.idx = 0\n        return o\n        \n        \n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    def\
-      \ __init__(self, skip=0):  # only default arguments here\n        gr.sync_block.__init__(\n\
-      \            self,\n            name='PRBS7 BER',\n            in_sig=[np.uint8],\n\
-      \            out_sig=[]\n        )\n        self.base = prbs_base(\"PRBS7\"\
-      )\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.skip  =\
-      \ skip\n        self.i = 0\n        \n    def work(self, input_items, output_items):\n\
-      \        inb = input_items[0]\n        gen = self.base.gen_n(len(inb))\n   \
-      \     if(self.nitems_read(0) > self.skip):\n            # only count bit errors\
-      \ after first skip bits\n            self.nerrs += np.sum(np.bitwise_xor(inb,\
-      \ gen).astype('float32'))\n            self.nbits += len(inb)\n        self.i\
-      \ += 1\n        if self.nbits > 0 and self.i > 100:\n            print(\"NBits:\
-      \ %d \\tNErrs: %d \\tBER: %f\"%(int(self.nbits), int(self.nerrs), self.nerrs/self.nbits))\n\
-      \            self.i = 0\n        return len(inb)\n        \n\n\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    skip: '0'
-  states:
-    _io_cache: ('PRBS7 BER', 'blk', [('skip', '0')], [('0', 'byte', 1)], [], '', ['skip'])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1856, 460.0]
-    rotation: 0
-    state: disabled
 - name: epy_block_2
   id: epy_block
   parameters:
@@ -635,7 +511,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [232, 300.0]
+    coordinate: [216, 268.0]
     rotation: 0
     state: disabled
 - name: epy_block_3
@@ -656,7 +532,7 @@ blocks:
       \       return len(out)\n"
     affinity: ''
     alias: ''
-    comment: ''
+    comment: repeats every 2047 bits
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -664,7 +540,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [48, 324.0]
+    coordinate: [24, 208.0]
     rotation: 0
     state: enabled
 - name: epy_block_4
@@ -706,19 +582,6 @@ blocks:
     coordinate: [1864, 512.0]
     rotation: 0
     state: enabled
-- name: import_0
-  id: import
-  parameters:
-    alias: ''
-    comment: ''
-    imports: import time
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [960, 668.0]
-    rotation: 0
-    state: disabled
 - name: qtgui_const_sink_x_0
   id: qtgui_const_sink_x
   parameters:
@@ -988,7 +851,7 @@ blocks:
     bus_structure: null
     coordinate: [1784, 236.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_time_sink_x_0_0
   id: qtgui_time_sink_x
   parameters:
@@ -1086,28 +949,12 @@ blocks:
     coordinate: [536, 684.0]
     rotation: 0
     state: disabled
-- name: snippet_0
-  id: snippet
-  parameters:
-    alias: ''
-    code: time.sleep(1)
-    comment: ''
-    priority: '0'
-    section: main_after_init
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1056, 652.0]
-    rotation: 0
-    state: disabled
 
 connections:
 - [analog_fastnoise_source_x_0, '0', blocks_add_xx_0, '0']
 - [blocks_add_xx_0, '0', blocks_multiply_const_vxx_0, '0']
 - [blocks_char_to_float_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_char_to_float_0_0, '0', qtgui_time_sink_x_0, '1']
-- [blocks_multiply_const_vxx_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [blocks_multiply_const_vxx_0, '0', blocks_probe_rate_0, '0']
 - [blocks_multiply_const_vxx_0, '0', difi_sink_cpp_0, '0']
 - [blocks_multiply_const_vxx_0, '0', epy_block_2_0, '0']
@@ -1117,11 +964,9 @@ connections:
 - [blocks_pack_k_bits_bb_0, '0', digital_constellation_modulator_0, '0']
 - [blocks_probe_rate_0, rate, blocks_message_debug_0, print]
 - [blocks_skiphead_0, '0', blocks_char_to_float_0_0, '0']
-- [blocks_skiphead_0, '0', epy_block_1, '0']
 - [blocks_skiphead_0, '0', epy_block_4, '0']
-- [blocks_skiphead_1, '0', blocks_char_to_float_0, '0']
-- [blocks_skiphead_1, '0', blocks_pack_k_bits_bb_0, '0']
-- [blocks_throttle2_0, '0', blocks_skiphead_1, '0']
+- [blocks_throttle2_0, '0', blocks_char_to_float_0, '0']
+- [blocks_throttle2_0, '0', blocks_pack_k_bits_bb_0, '0']
 - [blocks_unpack_k_bits_bb_0, '0', blocks_skiphead_0, '0']
 - [difi_source_cpp_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [difi_source_cpp_0_0, '0', epy_block_2, '0']
@@ -1130,8 +975,6 @@ connections:
 - [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
 - [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_symbol_sync_xx_0, '0', digital_costas_loop_cc_0, '0']
-- [epy_block_0, '0', blocks_throttle2_0, '0']
-- [epy_block_0, '0', epy_block_2_0_0, '0']
 - [epy_block_3, '0', blocks_throttle2_0, '0']
 - [epy_block_3, '0', epy_block_2_0_0, '0']
 
