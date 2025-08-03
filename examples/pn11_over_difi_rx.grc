@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: pn11_over_difi
+    id: pn11_over_difi_rx
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: PN11 Over DIFI
+    title: PN11 Over DIFI Rx
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -77,111 +77,6 @@ blocks:
     coordinate: [304, 20.0]
     rotation: 0
     state: enabled
-- name: analog_fastnoise_source_x_0
-  id: analog_fastnoise_source_x
-  parameters:
-    affinity: ''
-    alias: ''
-    amp: '0.2'
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    noise_type: analog.GR_GAUSSIAN
-    samples: '8192'
-    seed: '0'
-    type: complex
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [584, 4.0]
-    rotation: 0
-    state: enabled
-- name: blocks_add_xx_0
-  id: blocks_add_xx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_inputs: '2'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [792, 112.0]
-    rotation: 0
-    state: enabled
-- name: blocks_char_to_float_0
-  id: blocks_char_to_float
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    scale: '1'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1552, 220.0]
-    rotation: 0
-    state: disabled
-- name: blocks_char_to_float_0_0
-  id: blocks_char_to_float
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    scale: '1'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1568, 292.0]
-    rotation: 0
-    state: disabled
-- name: blocks_message_debug_0
-  id: blocks_message_debug
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    en_uvec: 'True'
-    log_level: info
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1712, 16.0]
-    rotation: 0
-    state: disabled
-- name: blocks_multiply_const_vxx_0
-  id: blocks_multiply_const_vxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    const: '45'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [904, 124.0]
-    rotation: 0
-    state: enabled
 - name: blocks_multiply_const_vxx_0_0
   id: blocks_multiply_const_vxx
   parameters:
@@ -199,45 +94,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 476.0]
+    coordinate: [480, 228.0]
     rotation: 0
     state: enabled
-- name: blocks_pack_k_bits_bb_0
-  id: blocks_pack_k_bits_bb
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    k: '8'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [384, 140.0]
-    rotation: 0
-    state: enabled
-- name: blocks_probe_rate_0
-  id: blocks_probe_rate
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha: '0.15'
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    mintime: '500.0'
-    name: ''
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1448, 52.0]
-    rotation: 0
-    state: disabled
 - name: blocks_skiphead_0
   id: blocks_skiphead
   parameters:
@@ -253,28 +112,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1688, 508.0]
-    rotation: 0
-    state: enabled
-- name: blocks_throttle2_0
-  id: blocks_throttle2
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    limit: auto
-    maximum: '0.1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [192, 196.0]
+    coordinate: [1648, 260.0]
     rotation: 0
     state: enabled
 - name: blocks_unpack_k_bits_bb_0
@@ -290,42 +128,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1536, 508.0]
-    rotation: 0
-    state: enabled
-- name: difi_sink_cpp_0
-  id: difi_sink_cpp
-  parameters:
-    affinity: ''
-    alias: ''
-    bit_depth: '16'
-    comment: 'there are 2 items going into the DIFI Sink for
-
-      every 1 bit coming out of the source block
-
-      (2 bits per symbol but 4 samples per symbol)'
-    context_pack_size: '108'
-    context_packet_send_count: '10'
-    data_size: '128'
-    gain: '1.0'
-    ip_addr: 127.0.0.1
-    max_iq: '127'
-    min_iq: '-127'
-    mode: 'False'
-    offset: '0'
-    port: '50003'
-    protocol: '1'
-    reference_time_frac: '0'
-    reference_time_full: '0'
-    sample_rate: samp_rate
-    scaling: '0'
-    stream_id: '0'
-    type: complex
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1072, 20.0]
+    coordinate: [1496, 260.0]
     rotation: 0
     state: enabled
 - name: difi_source_cpp_0_0
@@ -347,7 +150,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [120, 436.0]
+    coordinate: [80, 188.0]
     rotation: 0
     state: enabled
 - name: digital_constellation_decoder_cb_0
@@ -363,29 +166,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1312, 508.0]
-    rotation: 0
-    state: enabled
-- name: digital_constellation_modulator_0
-  id: digital_constellation_modulator
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    constellation: constellation_obj
-    differential: 'False'
-    excess_bw: '0.35'
-    log: 'False'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_symbol: sps
-    truncate: 'False'
-    verbose: 'False'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [528, 116.0]
+    coordinate: [1272, 260.0]
     rotation: 0
     state: enabled
 - name: digital_costas_loop_cc_0
@@ -403,7 +184,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1048, 384.0]
+    coordinate: [1008, 136.0]
     rotation: 0
     state: enabled
 - name: digital_symbol_sync_xx_0
@@ -430,7 +211,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [696, 404.0]
+    coordinate: [656, 156.0]
     rotation: 0
     state: enabled
 - name: epy_block_2
@@ -457,92 +238,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [536, 396.0]
+    coordinate: [496, 148.0]
     rotation: 0
     state: disabled
-- name: epy_block_2_0
-  id: epy_block
-  parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    def\
-      \ __init__(self, samples=1000):  # only default arguments here\n        gr.sync_block.__init__(\n\
-      \            self,\n            name='Print first N samples',\n            in_sig=[np.complex64],\n\
-      \            out_sig=[]\n        )\n        self.samples = samples\n       \
-      \ self.i = 0\n\n    def work(self, input_items, output_items):\n        if self.i\
-      \ < self.samples:\n            N = min(self.samples - self.i, len(input_items[0]))\n\
-      \            print(input_items[0][0:N])\n            self.i += N\n         \
-      \   return N\n        else:\n            return len(input_items[0])\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples: '100'
-  states:
-    _io_cache: ('Print first N samples', 'blk', [('samples', '1000')], [('0', 'complex',
-      1)], [], '', ['samples'])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [912, 28.0]
-    rotation: 0
-    state: disabled
-- name: epy_block_2_0_0
-  id: epy_block
-  parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    def\
-      \ __init__(self, samples=1000):  # only default arguments here\n        gr.sync_block.__init__(\n\
-      \            self,\n            name='Print first N samples',\n            in_sig=[np.uint8],\n\
-      \            out_sig=[]\n        )\n        self.samples = samples\n       \
-      \ self.i = 0\n\n    def work(self, input_items, output_items):\n        if self.i\
-      \ < self.samples:\n            N = min(self.samples - self.i, len(input_items[0]))\n\
-      \            print(input_items[0][0:N])\n            self.i += N\n         \
-      \   return N\n        else:\n            return len(input_items[0])\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples: '200'
-  states:
-    _io_cache: ('Print first N samples', 'blk', [('samples', '1000')], [('0', 'byte',
-      1)], [], '', ['samples'])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [216, 268.0]
-    rotation: 0
-    state: disabled
-- name: epy_block_3
-  id: epy_block
-  parameters:
-    _source_code: "from gnuradio import gr\nimport numpy as np\n\nclass pn11_source(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
-      \ name=\"PN11 Gen\",\n            in_sig=None,\n            out_sig=[np.uint8])\n\
-      \        self.reg = 0x400 # seed, must be a non-zero 11-bit integer (1 to 2046)\n\
-      \n    def work(self, input_items, output_items):\n        out = output_items[0]\n\
-      \        for i in range(len(out)):\n            #out[i] = self.reg & 0x01  #\
-      \ Output LSB\n            out[i] = (self.reg >> 10) & 1\n\n            # Feedback\
-      \ = XOR of bit 11 and bit 9\n            bit_11 = (self.reg >> 10) & 0x01\n\
-      \            bit_9 = (self.reg >> 8) & 0x01\n            new_bit = bit_11 ^\
-      \ bit_9\n\n            # Shift register: shift right and insert new bit at MSB\n\
-      \            #self.reg = ((self.reg >> 1) | (new_bit << 10)) & 0x7FF  # Mask\
-      \ to 11 bits\n            self.reg = ((self.reg << 1) & 0x7FF) | new_bit\n \
-      \       return len(out)\n"
-    affinity: ''
-    alias: ''
-    comment: repeats every 2047 bits
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    _io_cache: ('PN11 Gen', 'pn11_source', [], [], [('0', 'byte', 1)], '', [])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [24, 208.0]
-    rotation: 0
-    state: enabled
 - name: epy_block_4
   id: epy_block
   parameters:
@@ -579,7 +277,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1864, 512.0]
+    coordinate: [1808, 264.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -671,7 +369,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1376, 388.0]
+    coordinate: [1336, 140.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0
@@ -752,106 +450,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [536, 596.0]
+    coordinate: [496, 348.0]
     rotation: 0
     state: enabled
-- name: qtgui_time_sink_x_0
-  id: qtgui_time_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    autoscale: 'False'
-    axislabels: 'True'
-    color1: blue
-    color10: dark blue
-    color2: red
-    color3: green
-    color4: black
-    color5: cyan
-    color6: magenta
-    color7: yellow
-    color8: dark red
-    color9: dark green
-    comment: ''
-    ctrlpanel: 'False'
-    entags: 'True'
-    grid: 'False'
-    gui_hint: ''
-    label1: Signal 1
-    label10: Signal 10
-    label2: Signal 2
-    label3: Signal 3
-    label4: Signal 4
-    label5: Signal 5
-    label6: Signal 6
-    label7: Signal 7
-    label8: Signal 8
-    label9: Signal 9
-    legend: 'True'
-    marker1: '-1'
-    marker10: '-1'
-    marker2: '-1'
-    marker3: '-1'
-    marker4: '-1'
-    marker5: '-1'
-    marker6: '-1'
-    marker7: '-1'
-    marker8: '-1'
-    marker9: '-1'
-    name: '""'
-    nconnections: '2'
-    size: '2000'
-    srate: samp_rate
-    stemplot: 'False'
-    style1: '1'
-    style10: '1'
-    style2: '1'
-    style3: '1'
-    style4: '1'
-    style5: '1'
-    style6: '1'
-    style7: '1'
-    style8: '1'
-    style9: '1'
-    tr_chan: '0'
-    tr_delay: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
-    type: float
-    update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    ylabel: Amplitude
-    ymax: '1'
-    ymin: '-1'
-    yunit: '""'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1784, 236.0]
-    rotation: 0
-    state: disabled
 - name: qtgui_time_sink_x_0_0
   id: qtgui_time_sink_x
   parameters:
@@ -946,37 +547,22 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [536, 684.0]
+    coordinate: [496, 436.0]
     rotation: 0
     state: disabled
 
 connections:
-- [analog_fastnoise_source_x_0, '0', blocks_add_xx_0, '0']
-- [blocks_add_xx_0, '0', blocks_multiply_const_vxx_0, '0']
-- [blocks_char_to_float_0, '0', qtgui_time_sink_x_0, '0']
-- [blocks_char_to_float_0_0, '0', qtgui_time_sink_x_0, '1']
-- [blocks_multiply_const_vxx_0, '0', blocks_probe_rate_0, '0']
-- [blocks_multiply_const_vxx_0, '0', difi_sink_cpp_0, '0']
-- [blocks_multiply_const_vxx_0, '0', epy_block_2_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', digital_symbol_sync_xx_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_time_sink_x_0_0, '0']
-- [blocks_pack_k_bits_bb_0, '0', digital_constellation_modulator_0, '0']
-- [blocks_probe_rate_0, rate, blocks_message_debug_0, print]
-- [blocks_skiphead_0, '0', blocks_char_to_float_0_0, '0']
 - [blocks_skiphead_0, '0', epy_block_4, '0']
-- [blocks_throttle2_0, '0', blocks_char_to_float_0, '0']
-- [blocks_throttle2_0, '0', blocks_pack_k_bits_bb_0, '0']
 - [blocks_unpack_k_bits_bb_0, '0', blocks_skiphead_0, '0']
 - [difi_source_cpp_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [difi_source_cpp_0_0, '0', epy_block_2, '0']
 - [digital_constellation_decoder_cb_0, '0', blocks_unpack_k_bits_bb_0, '0']
-- [digital_constellation_modulator_0, '0', blocks_add_xx_0, '1']
 - [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
 - [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_symbol_sync_xx_0, '0', digital_costas_loop_cc_0, '0']
-- [epy_block_3, '0', blocks_throttle2_0, '0']
-- [epy_block_3, '0', epy_block_2_0_0, '0']
 
 metadata:
   file_format: 1
