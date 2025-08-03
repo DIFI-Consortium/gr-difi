@@ -4,3 +4,4 @@
 build*/
 examples/grc/*.py
 .venv/*
+examples/pn11_over_difi.py
