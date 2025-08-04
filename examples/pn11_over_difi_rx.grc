@@ -244,23 +244,30 @@ blocks:
 - name: epy_block_4
   id: epy_block
   parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass pn11_ber(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
-      \            name='PN11 BER',\n            in_sig=[np.uint8],\n            out_sig=[]\n\
-      \        )\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i\
-      \ = 0\n        self.n_calls = 0\n        self.pn_length = 2047  # Length of\
-      \ PN11 sequence: 2^11 - 1\n        \n        # Generate PN11 sequence twice\
-      \ so that we dont have to wrap around\n        # (each call to work we will\
-      \ process at most pn_length bits)\n        self.seq = np.zeros(self.pn_length\
-      \ * 2, dtype=np.uint8)\n        reg = 0x400  # seed (non-zero 11-bit integer)\n\
-      \        for i in range(self.pn_length * 2):\n            self.seq[i] = (reg\
-      \ >> 10) & 1\n            bit_11 = (reg >> 10) & 0x01\n            bit_9 = (reg\
-      \ >> 8) & 0x01\n            new_bit = bit_11 ^ bit_9\n            reg = ((reg\
-      \ << 1) & 0x7FF) | new_bit\n            \n        # sanity check\n        print(self.seq[0:20])\n\
-      \        print(self.seq[2047:2067])\n\n    def work(self, input_items, output_items):\n\
-      \        N = min(len(input_items[0]), self.pn_length)\n        sub_seq = self.seq[self.i:self.i\
-      \ + N]\n        self.i += N\n        self.i %= self.pn_length\n\n        # Calculate\
-      \ errors and bits processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\ndef pn11_gen(seed,\
+      \ length):\n    reg = [int(x) for x in f\"{seed:011b}\"]\n    output = []\n\
+      \    for _ in range(length):\n        output_bit = reg[-1]\n        output.append(output_bit)\n\
+      \        # Feedback using taps at positions 11 and 9 (indexes 10 and 8)\n  \
+      \      feedback = reg[10] ^ reg[8]\n        # Shift left and insert feedback\
+      \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
+      \nclass pn11_ber(gr.sync_block):\n    def __init__(self, seed=1):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='PN11 BER',\n            in_sig=[np.uint8],\n\
+      \            out_sig=[]\n        )\n        self.nbits = 0.0\n        self.nerrs\
+      \ = 0.0\n        self.i = 0\n        self.n_calls = 0\n        self.pn_length\
+      \ = 2047  # Length of PN11 sequence: 2^11 - 1\n        \n        '''\n     \
+      \   # Generate PN11 sequence twice so that we dont have to wrap around\n   \
+      \     # (each call to work we will process at most pn_length bits)\n       \
+      \ self.seq = np.zeros(self.pn_length * 2, dtype=np.uint8)\n        reg = seed\
+      \  # seed (non-zero 11-bit integer)\n        for i in range(self.pn_length *\
+      \ 2):\n            self.seq[i] = (reg >> 10) & 1\n            bit_11 = (reg\
+      \ >> 10) & 0x01\n            bit_9 = (reg >> 8) & 0x01\n            new_bit\
+      \ = bit_11 ^ bit_9\n            reg = ((reg << 1) & 0x7FF) | new_bit\n     \
+      \   '''\n        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n \
+      \       \n        # sanity check\n        print(self.seq[0:20])\n        print(self.seq[2047:2067])\n\
+      \n    def work(self, input_items, output_items):\n        N = min(len(input_items[0]),\
+      \ self.pn_length)\n        sub_seq = self.seq[self.i:self.i + N]\n        self.i\
+      \ += N\n        self.i %= self.pn_length\n\n        # Calculate errors and bits\
+      \ processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
       \ sub_seq).astype('float32'))\n        self.nbits += N\n        self.n_calls\
       \ += 1\n        if self.n_calls > 100: # too many prints otherwise, will slow\
       \ down GR\n            print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
@@ -271,8 +278,10 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
+    seed: '1'
   states:
-    _io_cache: ('PN11 BER', 'pn11_ber', [], [('0', 'byte', 1)], [], '', [])
+    _io_cache: ('PN11 BER', 'pn11_ber', [('seed', '1')], [('0', 'byte', 1)], [], '',
+      [])
     bus_sink: false
     bus_source: false
     bus_structure: null

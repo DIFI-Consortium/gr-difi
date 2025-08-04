@@ -249,31 +249,66 @@ blocks:
     coordinate: [536, 236.0]
     rotation: 0
     state: enabled
+- name: epy_block_2
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\
+      \  # other base classes are basic_block, decim_block, interp_block\n    def\
+      \ __init__(self, samples=1000):  # only default arguments here\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Print first N samples',\n            in_sig=[np.uint8],\n\
+      \            out_sig=[]\n        )\n        self.samples = samples\n       \
+      \ self.i = 0\n\n    def work(self, input_items, output_items):\n        if self.i\
+      \ < self.samples:\n            N = min(self.samples - self.i, len(input_items[0]))\n\
+      \            print(input_items[0][0:N])\n            self.i += N\n         \
+      \   return N\n        else:\n            return len(input_items[0])\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples: '30'
+  states:
+    _io_cache: ('Print first N samples', 'blk', [('samples', '1000')], [('0', 'byte',
+      1)], [], '', ['samples'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [176, 348.0]
+    rotation: 0
+    state: disabled
 - name: epy_block_3
   id: epy_block
   parameters:
-    _source_code: "from gnuradio import gr\nimport numpy as np\n\nclass pn11_source(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
-      \ name=\"PN11 Gen\",\n            in_sig=None,\n            out_sig=[np.uint8])\n\
-      \        \n        self.length = 2047  # Length of PN11 sequence: 2^11 - 1\n\
-      \        self.seq = np.zeros(self.length, dtype=np.uint8)\n        \n      \
-      \  # Generate PN11 sequence once\n        reg = 0x400  # seed (non-zero 11-bit\
-      \ integer)\n        for i in range(self.length):\n            self.seq[i] =\
-      \ (reg >> 10) & 1\n            bit_11 = (reg >> 10) & 0x01\n            bit_9\
-      \ = (reg >> 8) & 0x01\n            new_bit = bit_11 ^ bit_9\n            reg\
-      \ = ((reg << 1) & 0x7FF) | new_bit\n        \n        self.idx = 0  # Current\
-      \ index in sequence\n\n    def work(self, input_items, output_items):\n    \
-      \    out = output_items[0]\n        n = len(out)\n        \n        # Copy precomputed\
-      \ PN sequence to output, wrap around if needed\n        for i in range(n):\n\
-      \            out[i] = self.seq[self.idx]\n            self.idx = (self.idx +\
-      \ 1) % self.length\n        \n        return n\n\n"
+    _source_code: "from gnuradio import gr\nimport numpy as np\n\ndef pn11_gen(seed,\
+      \ length):\n    reg = [int(x) for x in f\"{seed:011b}\"]\n    output = []\n\
+      \    for _ in range(length):\n        output_bit = reg[-1]\n        output.append(output_bit)\n\
+      \        # Feedback using taps at positions 11 and 9 (indexes 10 and 8)\n  \
+      \      feedback = reg[10] ^ reg[8]\n        # Shift left and insert feedback\
+      \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
+      \    \nclass pn11_source(gr.sync_block):\n    def __init__(self, seed=1):\n\
+      \        gr.sync_block.__init__(self,\n            name=\"PN11 Gen\",\n    \
+      \        in_sig=None,\n            out_sig=[np.uint8])\n        \n        self.length\
+      \ = 2047  # Length of PN11 sequence: 2^11 - 1\n        self.seq = np.zeros(self.length,\
+      \ dtype=np.uint8)\n        \n        '''\n        # Generate PN11 sequence once\n\
+      \        reg = seed # non-zero 11-bit integer\n        for i in range(self.length):\n\
+      \            self.seq[i] = (reg >> 10) & 1\n            bit_11 = (reg >> 10)\
+      \ & 0x01\n            bit_9 = (reg >> 8) & 0x01\n            new_bit = bit_11\
+      \ ^ bit_9\n            reg = ((reg << 1) & 0x7FF) | new_bit\n        '''\n \
+      \       self.seq = pn11_gen(seed=seed, length=self.length)\n\n        self.idx\
+      \ = 0  # Current index in sequence\n\n    def work(self, input_items, output_items):\n\
+      \        out = output_items[0]\n        n = len(out)\n        \n        # Copy\
+      \ precomputed PN sequence to output, wrap around if needed\n        for i in\
+      \ range(n):\n            out[i] = self.seq[self.idx]\n            self.idx =\
+      \ (self.idx + 1) % self.length\n        \n        return n\n\n"
     affinity: ''
     alias: ''
     comment: repeats every 2047 bits
     maxoutbuf: '0'
     minoutbuf: '0'
+    seed: '1'
   states:
-    _io_cache: ('PN11 Gen', 'pn11_source', [], [], [('0', 'byte', 1)], '', [])
+    _io_cache: ('PN11 Gen', 'pn11_source', [('seed', '1')], [], [('0', 'byte', 1)],
+      '', [])
     bus_sink: false
     bus_source: false
     bus_structure: null
@@ -388,6 +423,7 @@ connections:
 - [blocks_throttle2_0, '0', blocks_pack_k_bits_bb_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_add_xx_0, '1']
 - [epy_block_3, '0', blocks_throttle2_0, '0']
+- [epy_block_3, '0', epy_block_2, '0']
 
 metadata:
   file_format: 1
