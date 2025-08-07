@@ -50,19 +50,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [384, 12.0]
-    rotation: 0
-    state: enabled
-- name: samp_rate
-  id: variable
-  parameters:
-    comment: ''
-    value: '500000'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [192, 20.0]
+    coordinate: [288, 12.0]
     rotation: 0
     state: enabled
 - name: sps
@@ -74,7 +62,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 20.0]
+    coordinate: [208, 20.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0_0
@@ -94,7 +82,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [480, 228.0]
+    coordinate: [464, 228.0]
     rotation: 0
     state: enabled
 - name: blocks_skiphead_0
@@ -112,7 +100,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1648, 260.0]
+    coordinate: [1656, 260.0]
     rotation: 0
     state: enabled
 - name: blocks_unpack_k_bits_bb_0
@@ -136,7 +124,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    bit_depth: '8'
+    bit_depth: '16'
     comment: ''
     context_behavior: '0'
     ip_addr: 127.0.0.1
@@ -150,7 +138,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [80, 188.0]
+    coordinate: [48, 188.0]
     rotation: 0
     state: enabled
 - name: digital_constellation_decoder_cb_0
@@ -169,6 +157,26 @@ blocks:
     coordinate: [1272, 260.0]
     rotation: 0
     state: enabled
+- name: digital_corr_est_cc_0
+  id: digital_corr_est_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    mark_delay: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sps: ''
+    symbols: ''
+    threshold: '0.9'
+    threshold_method: digital.THRESHOLD_ABSOLUTE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1624, 316.0]
+    rotation: 0
+    state: disabled
 - name: digital_costas_loop_cc_0
   id: digital_costas_loop_cc
   parameters:
@@ -238,7 +246,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 148.0]
+    coordinate: [464, 156.0]
     rotation: 0
     state: disabled
 - name: epy_block_4
@@ -285,7 +293,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1808, 264.0]
+    coordinate: [1816, 260.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -398,7 +406,7 @@ blocks:
     autoscale: 'False'
     average: '0.2'
     axislabels: 'True'
-    bw: samp_rate
+    bw: 40e6
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -411,7 +419,7 @@ blocks:
     color9: '"dark green"'
     comment: ''
     ctrlpanel: 'False'
-    fc: '0'
+    fc: 2.4e9
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'True'
@@ -433,7 +441,7 @@ blocks:
     name: '""'
     nconnections: '1'
     norm_window: 'False'
-    showports: 'False'
+    showports: 'True'
     tr_chan: '0'
     tr_level: '0.0'
     tr_mode: qtgui.TRIG_MODE_FREE
@@ -458,7 +466,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 348.0]
+    coordinate: [712, 344.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0
@@ -517,7 +525,7 @@ blocks:
     name: '""'
     nconnections: '1'
     size: '100'
-    srate: samp_rate
+    srate: '1'
     stemplot: 'False'
     style1: '1'
     style10: '1'
@@ -555,7 +563,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 436.0]
+    coordinate: [688, 460.0]
     rotation: 0
     state: enabled
 

@@ -52,19 +52,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [384, 12.0]
+    coordinate: [424, 12.0]
     rotation: 0
     state: enabled
-- name: samp_rate
+- name: difi_samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '500000'
+    value: '1000000'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 20.0]
+    coordinate: [200, 20.0]
     rotation: 0
     state: enabled
 - name: sps
@@ -76,7 +76,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 20.0]
+    coordinate: [328, 20.0]
     rotation: 0
     state: enabled
 - name: analog_fastnoise_source_x_0
@@ -132,7 +132,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1128, 244.0]
+    coordinate: [1112, 244.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0_0
@@ -152,7 +152,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 244.0]
+    coordinate: [904, 244.0]
     rotation: 0
     state: enabled
 - name: blocks_pack_k_bits_bb_0
@@ -168,7 +168,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 260.0]
+    coordinate: [368, 260.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle2_0
@@ -182,22 +182,42 @@ blocks:
     maximum: '0.1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samples_per_second: samp_rate
+    samples_per_second: difi_samp_rate/2
     type: byte
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 252.0]
+    coordinate: [184, 252.0]
     rotation: 0
     state: enabled
+- name: blocks_vector_source_x_0
+  id: blocks_vector_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    repeat: 'True'
+    tags: '[]'
+    type: complex
+    vector: (0, 0, 0)
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [16, 332.0]
+    rotation: 0
+    state: disabled
 - name: difi_sink_cpp_0
   id: difi_sink_cpp
   parameters:
     affinity: ''
     alias: ''
-    bit_depth: '8'
+    bit_depth: '16'
     comment: 'there are 2 items going into the DIFI Sink for
 
       every 1 bit coming out of the source block
@@ -216,7 +236,7 @@ blocks:
     protocol: '1'
     reference_time_frac: '0'
     reference_time_full: '0'
-    sample_rate: samp_rate
+    sample_rate: difi_samp_rate
     scaling: '0'
     stream_id: '0'
     type: complex
@@ -224,7 +244,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1304, 140.0]
+    coordinate: [1288, 140.0]
     rotation: 0
     state: enabled
 - name: digital_constellation_modulator_0
@@ -273,7 +293,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 348.0]
+    coordinate: [208, 340.0]
     rotation: 0
     state: disabled
 - name: epy_block_3
@@ -312,7 +332,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [24, 264.0]
+    coordinate: [24, 260.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -371,7 +391,7 @@ blocks:
     name: '""'
     nconnections: '1'
     size: '1024'
-    srate: samp_rate
+    srate: difi_samp_rate
     stemplot: 'False'
     style1: '1'
     style10: '1'
@@ -409,9 +429,26 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1104, 348.0]
+    coordinate: [1088, 348.0]
     rotation: 0
     state: enabled
+- name: snippet_0
+  id: snippet
+  parameters:
+    alias: ''
+    code: '# generate PN11
+
+      #print out 2047 bits'
+    comment: ''
+    priority: '0'
+    section: main_after_init
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [16, 420.0]
+    rotation: 0
+    state: disabled
 
 connections:
 - [analog_fastnoise_source_x_0, '0', blocks_add_xx_0, '0']
