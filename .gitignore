@@ -4,4 +4,7 @@
 build*/
 examples/grc/*.py
 .venv/*
+examples/*_epy_block_*.py
+examples/pn11_over_difi_rx.py
+examples/pn11_over_difi_tx.py
 examples/DIFI_STAND_ALONE_EXAMPLE.py
