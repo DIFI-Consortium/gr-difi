@@ -197,19 +197,26 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
-    mark_delay: ''
+    comment: '00 -> -1-1j
+
+      01 -> 1-1j
+
+      10 -> -1+1j
+
+      11 -> 1+1j'
+    mark_delay: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
-    sps: ''
-    symbols: ''
-    threshold: '0.9'
-    threshold_method: digital.THRESHOLD_ABSOLUTE
+    sps: '4'
+    symbols: '[-1+1j, -1-1j, -1-1j, -1-1j, -1-1j, 1-1j, -1-1j, -1-1j, -1-1j, -1-1j,
+      -1+1j, -1+1j]'
+    threshold: '0.999'
+    threshold_method: digital.THRESHOLD_DYNAMIC
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1624, 316.0]
+    coordinate: [1728, 324.0]
     rotation: 0
     state: disabled
 - name: digital_costas_loop_cc_0
@@ -598,7 +605,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 460.0]
+    coordinate: [696, 460.0]
     rotation: 0
     state: enabled
 
