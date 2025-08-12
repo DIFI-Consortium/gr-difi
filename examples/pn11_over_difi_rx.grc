@@ -124,7 +124,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    bit_depth: '16'
+    bit_depth: '8'
     comment: ''
     context_behavior: '0'
     ip_addr: 127.0.0.1
