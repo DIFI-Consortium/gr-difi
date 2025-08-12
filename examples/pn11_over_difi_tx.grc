@@ -441,9 +441,10 @@ blocks:
       \    output.append(output_bit)\n    # Feedback using taps at positions 11 and\
       \ 9 (indexes 10 and 8)\n    feedback = reg[10] ^ reg[8]\n    # Shift left and\
       \ insert feedback at the beginning\n    reg = [feedback] + reg[:-1]\noutput\
-      \ = np.asarray(output, dtype=np.uint8)\n# This is designed to be copy-pasted\
-      \ into the Vector Source block\nprint(\"(\", end=\"\")\nfor i in range(length):\n\
-      \    print(output[i], end=\",\")\nprint(\")\")"
+      \ = np.asarray(output, dtype=np.uint8)\n# commpy.sequences.pnsequence(11, f'{seed:0{11}b}',\
+      \ '00000000101', 2047)\n# This is designed to be copy-pasted into the Vector\
+      \ Source block\nprint(\"(\", end=\"\")\nfor i in range(length):\n    print(output[i],\
+      \ end=\",\")\nprint(\")\")"
     comment: ''
     priority: '0'
     section: main_after_init
@@ -453,7 +454,7 @@ blocks:
     bus_structure: null
     coordinate: [8, 324.0]
     rotation: 0
-    state: disabled
+    state: enabled
 
 connections:
 - [analog_fastnoise_source_x_0, '0', blocks_add_xx_0, '0']
