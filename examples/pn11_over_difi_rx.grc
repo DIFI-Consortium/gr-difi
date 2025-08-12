@@ -65,6 +65,21 @@ blocks:
     coordinate: [208, 20.0]
     rotation: 0
     state: enabled
+- name: blocks_message_debug_0
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    en_uvec: 'True'
+    log_level: info
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [984, 8.0]
+    rotation: 0
+    state: disabled
 - name: blocks_multiply_const_vxx_0_0
   id: blocks_multiply_const_vxx
   parameters:
@@ -85,6 +100,26 @@ blocks:
     coordinate: [464, 228.0]
     rotation: 0
     state: enabled
+- name: blocks_probe_rate_0
+  id: blocks_probe_rate
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha: '0.15'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    mintime: '500.0'
+    name: ''
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [696, 20.0]
+    rotation: 0
+    state: disabled
 - name: blocks_skiphead_0
   id: blocks_skiphead
   parameters:
@@ -277,7 +312,7 @@ blocks:
       \ += N\n        self.i %= self.pn_length\n\n        # Calculate errors and bits\
       \ processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
       \ sub_seq).astype('float32'))\n        self.nbits += N\n        self.n_calls\
-      \ += 1\n        if self.n_calls > 100: # too many prints otherwise, will slow\
+      \ += 1\n        if self.n_calls > 1000: # too many prints otherwise, will slow\
       \ down GR\n            print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
       \ \\tBER: {self.nerrs / self.nbits:.6f}\")\n            self.n_calls = 0\n\n\
       \        return N\n"
@@ -568,9 +603,11 @@ blocks:
     state: enabled
 
 connections:
+- [blocks_multiply_const_vxx_0_0, '0', blocks_probe_rate_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', digital_symbol_sync_xx_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_time_sink_x_0_0, '0']
+- [blocks_probe_rate_0, rate, blocks_message_debug_0, print]
 - [blocks_skiphead_0, '0', epy_block_4, '0']
 - [blocks_unpack_k_bits_bb_0, '0', blocks_skiphead_0, '0']
 - [difi_source_cpp_0_0, '0', blocks_multiply_const_vxx_0_0, '0']

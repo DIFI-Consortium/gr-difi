@@ -454,7 +454,7 @@ blocks:
     bus_structure: null
     coordinate: [8, 324.0]
     rotation: 0
-    state: enabled
+    state: disabled
 
 connections:
 - [analog_fastnoise_source_x_0, '0', blocks_add_xx_0, '0']
