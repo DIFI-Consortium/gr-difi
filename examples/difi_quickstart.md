@@ -1,6 +1,6 @@
 # Quickstart: Running the DIFI source and sink block examples
 
-The DIFI source and sink blocks are based on the IEEE-ISTO Std 4900-2021: Digital IF Interoperability 1.0 Standard. They
+The DIFI source and sink blocks are based on the ISTO Std 4900-2021: Digital IF Interoperability 1.0 Standard. They
 enable users to transmit and receive digitized IF data and corresponding metadata over standard IP networks using GNU
 Radio.
 
@@ -33,5 +33,5 @@ the DIFI sink block running with a paired DIFI source block.
 ## Recommended content
 ### [Digital Intermediate Frequency Interoperability (DIFI) Consortium](https://dificonsortium.org/)
 
-The organization which oversees development of the IEEE-ISTO Std 4900-2021: Digital IF Interoperability 1.0 Standard
+The organization which oversees development of the ISTO Std 4900-2021: Digital IF Interoperability 1.0 Standard
 

@@ -4,7 +4,7 @@ The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Mod
 
 ## Table of Contents
 
-- [DIFI Blocks using the IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard](#difi-blocks-using-the-ieee-isto-std-4900-2021-digital-if-interoperability-standard)
+- [DIFI Blocks using the ISTO Std 4900-2021: Digital IF Interoperability Standard](#difi-blocks-using-the-isto-std-4900-2021-digital-if-interoperability-standard)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installing DIFI OOT](#installing-difi-oot)
@@ -14,9 +14,9 @@ The Digital Intermediate Frequency Interoperability (DIFI) Out of Tree (OOT) Mod
 - [Support](#support)
 - [License](#license)
 
-## DIFI Blocks Using the IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard
+## DIFI Blocks Using the ISTO Std 4900-2021: Digital IF Interoperability Standard
 
-This is a set of GNU Radio blocks based on IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard version 1.0.
+This is a set of GNU Radio blocks based on ISTO Std 4900-2021: Digital IF Interoperability Standard version 1.0.
 
 There are two DIFI blocks (source and sink) as part of this OOT module. The Bit Depths currently supported are 8 and 16 with upcoming support for the full range of bit depths specified in the DIFI standard.
 

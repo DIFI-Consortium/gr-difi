@@ -54,7 +54,7 @@ asserts:
 - ${ bit_depth == '8' if type.fcn == 'sc8' else True }
 
 documentation: |-
-     A DIFI source block is based on IEEE-ISTO Std 4900-2021: Digital IF Interoperability Standard
+     A DIFI source block is based on ISTO Std 4900-2021: Digital IF Interoperability Standard
      The block is not fully compliant just yet. Bit Depths supported are currently 8 and 16 with full support coming at a later date.
 
      This block will emit the following tags in the following situations-
