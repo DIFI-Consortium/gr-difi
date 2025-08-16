@@ -128,16 +128,16 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_items: '42'
-    type: byte
+    num_items: '21'
+    type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1656, 260.0]
+    coordinate: [1424, 300.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_unpack_k_bits_bb_0
   id: blocks_unpack_k_bits_bb
   parameters:
@@ -151,7 +151,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1496, 260.0]
+    coordinate: [1816, 252.0]
     rotation: 0
     state: enabled
 - name: difi_source_cpp_0_0
@@ -189,36 +189,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1272, 260.0]
+    coordinate: [1544, 252.0]
     rotation: 0
     state: enabled
-- name: digital_corr_est_cc_0
-  id: digital_corr_est_cc
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: '00 -> -1-1j
-
-      01 -> 1-1j
-
-      10 -> -1+1j
-
-      11 -> 1+1j'
-    mark_delay: '0'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    sps: '4'
-    symbols: '[-1+1j, -1-1j, -1-1j, -1-1j, -1-1j, 1-1j, -1-1j, -1-1j, -1-1j, -1-1j,
-      -1+1j, -1+1j]'
-    threshold: '0.999'
-    threshold_method: digital.THRESHOLD_DYNAMIC
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1728, 324.0]
-    rotation: 0
-    state: disabled
 - name: digital_costas_loop_cc_0
   id: digital_costas_loop_cc
   parameters:
@@ -300,29 +273,84 @@ blocks:
       \        # Feedback using taps at positions 11 and 9 (indexes 10 and 8)\n  \
       \      feedback = reg[10] ^ reg[8]\n        # Shift left and insert feedback\
       \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
+      \nclass pn11_ber(gr.basic_block):\n    def __init__(self, seed=1):\n       \
+      \ gr.basic_block.__init__(\n            self,\n            name='PN11 Sync',\n\
+      \            in_sig=[np.complex64], #[np.uint8],\n            out_sig=[np.complex64]\n\
+      \        )\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i\
+      \ = 0\n        self.n_calls = 0\n        self.pn_length = 2047  # Length of\
+      \ PN11 sequence: 2^11 - 1\n        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n\
+      \        self.synced = False\n        self.phase_shift = 0\n        self.temp_count\
+      \ = 0\n\n        self.corr_thresh = 1000.0\n        \n        # Craft search\
+      \ preamble\n        qpsk_mapping = np.asarray([-1-1j, 1-1j, -1+1j, 1+1j], dtype=np.complex64)\n\
+      \        self.search_preamble = np.zeros(self.pn_length//2, dtype=np.complex64)\n\
+      \        for i in range(self.pn_length//2):\n            self.search_preamble[i]\
+      \ = qpsk_mapping[self.seq[i*2] + self.seq[i*2+1]*2]\n\n\n    def general_work(self,\
+      \ input_items, output_items):\n        in0 = input_items[0]\n        out = output_items[0]\n\
+      \        N = len(out)\n        if not self.synced:\n            if N <= self.pn_length:\
+      \ # need more samples\n                return 0\n            max_corr = 0\n\
+      \            for i in range(N - self.pn_length//2):\n                corr =\
+      \ np.abs(np.dot(input_items[0][i:i+self.pn_length//2], self.search_preamble))\n\
+      \                # With QPSK there's actually no need to check all 4 rotations,\
+      \ rotating doesnt change the abs(corr(dot()))\n                if corr > max_corr:\n\
+      \                    max_corr = corr\n                if corr > self.corr_thresh:\n\
+      \                    print(\"Synced! at index\", i)\n                    print(\"\
+      self.temp_count\", self.temp_count)\n                    self.synced = True\n\
+      \                    \n                    phase_diff = np.angle(input_items[0][i]\
+      \ / self.search_preamble[0])\n                    closest = min([np.pi / 2,\
+      \ np.pi, 3 * np.pi / 2, 2 * np.pi], key=lambda t: abs(phase_diff - t))\n   \
+      \                 self.phase_shift = np.exp(1j*closest)\n                  \
+      \  #print(\"Phase shift:\", self.phase_shift)\n                    #print(input_items[0][i:i+10]\
+      \ * -1 * self.phase_shift)\n                    self.consume(0, i) # drop the\
+      \ samples right before the spike\n                    return 0\n           \
+      \ print(\"No sync found, max corr:\", max_corr)\n            self.consume(0,\
+      \ N - self.pn_length//2)\n            self.temp_count += N - self.pn_length//2\n\
+      \            return 0\n            \n        else: # Straight copy\n       \
+      \     n = min(len(in0), N)\n            out[:n] = in0[:n] # * self.phase_shift\n\
+      \            self.consume(0, n)\n            return n\n            \n      \
+      \  \n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '4000'
+    seed: '1'
+  states:
+    _io_cache: ('PN11 Sync', 'pn11_ber', [('seed', '1')], [('0', 'complex', 1)], [('0',
+      'complex', 1)], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1296, 252.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_4_0
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\ndef pn11_gen(seed,\
+      \ length):\n    reg = [int(x) for x in f\"{seed:011b}\"]\n    output = []\n\
+      \    for _ in range(length):\n        output_bit = reg[-1]\n        output.append(output_bit)\n\
+      \        # Feedback using taps at positions 11 and 9 (indexes 10 and 8)\n  \
+      \      feedback = reg[10] ^ reg[8]\n        # Shift left and insert feedback\
+      \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
       \nclass pn11_ber(gr.sync_block):\n    def __init__(self, seed=1):\n        gr.sync_block.__init__(\n\
       \            self,\n            name='PN11 BER',\n            in_sig=[np.uint8],\n\
       \            out_sig=[]\n        )\n        self.nbits = 0.0\n        self.nerrs\
       \ = 0.0\n        self.i = 0\n        self.n_calls = 0\n        self.pn_length\
-      \ = 2047  # Length of PN11 sequence: 2^11 - 1\n        \n        '''\n     \
-      \   # Generate PN11 sequence twice so that we dont have to wrap around\n   \
-      \     # (each call to work we will process at most pn_length bits)\n       \
-      \ self.seq = np.zeros(self.pn_length * 2, dtype=np.uint8)\n        reg = seed\
-      \  # seed (non-zero 11-bit integer)\n        for i in range(self.pn_length *\
-      \ 2):\n            self.seq[i] = (reg >> 10) & 1\n            bit_11 = (reg\
-      \ >> 10) & 0x01\n            bit_9 = (reg >> 8) & 0x01\n            new_bit\
-      \ = bit_11 ^ bit_9\n            reg = ((reg << 1) & 0x7FF) | new_bit\n     \
-      \   '''\n        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n \
-      \       \n        # sanity check\n        print(self.seq[0:20])\n        print(self.seq[2047:2067])\n\
-      \n    def work(self, input_items, output_items):\n        N = min(len(input_items[0]),\
-      \ self.pn_length)\n        sub_seq = self.seq[self.i:self.i + N]\n        self.i\
-      \ += N\n        self.i %= self.pn_length\n\n        # Calculate errors and bits\
-      \ processed\n        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N],\
-      \ sub_seq).astype('float32'))\n        self.nbits += N\n        self.n_calls\
-      \ += 1\n        if self.n_calls > 1000: # too many prints otherwise, will slow\
-      \ down GR\n            print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
-      \ \\tBER: {self.nerrs / self.nbits:.6f}\")\n            self.n_calls = 0\n\n\
-      \        return N\n"
+      \ = 2047  # Length of PN11 sequence: 2^11 - 1\n        self.seq = pn11_gen(seed=seed,\
+      \ length=self.pn_length*2)\n        self.synced = False\n        self.search_size\
+      \ = 2047\n        self.corr_thresh = 100.0\n        \n        # Craft search\
+      \ preamble\n        qpsk_mapping = np.asarray([-1-1j, 1-1j, -1+1j, 1+1j], dtype=np.complex64)\n\
+      \        self.search_preamble = np.zeros(self.search_size, dtype=np.complex64)\n\
+      \        for i in range(self.search_size):\n            self.search_preamble[i]\
+      \ = qpsk_mapping[self.seq[i*2]*2 + self.seq[i*2+1]]\n\n\n    def work(self,\
+      \ input_items, output_items):\n        N = min(len(input_items[0]), self.pn_length)\n\
+      \        sub_seq = self.seq[self.i:self.i + N]\n        self.i += N\n      \
+      \  self.i %= self.pn_length\n\n        # Calculate errors and bits processed\n\
+      \        self.nerrs += np.sum(np.bitwise_xor(input_items[0][0:N], sub_seq).astype('float32'))\n\
+      \        self.nbits += N\n        self.n_calls += 1\n        if self.n_calls\
+      \ > 100: # too many prints otherwise, will slow down GR\n            print(f\"\
+      NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)} \\tBER: {self.nerrs / self.nbits:.6f}\"\
+      )\n            self.n_calls = 0\n\n        return N\n\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -335,7 +363,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1816, 260.0]
+    coordinate: [1968, 252.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -615,14 +643,16 @@ connections:
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_time_sink_x_0_0, '0']
 - [blocks_probe_rate_0, rate, blocks_message_debug_0, print]
-- [blocks_skiphead_0, '0', epy_block_4, '0']
-- [blocks_unpack_k_bits_bb_0, '0', blocks_skiphead_0, '0']
+- [blocks_skiphead_0, '0', digital_constellation_decoder_cb_0, '0']
+- [blocks_unpack_k_bits_bb_0, '0', epy_block_4_0, '0']
 - [difi_source_cpp_0_0, '0', blocks_multiply_const_vxx_0_0, '0']
 - [difi_source_cpp_0_0, '0', epy_block_2, '0']
 - [digital_constellation_decoder_cb_0, '0', blocks_unpack_k_bits_bb_0, '0']
-- [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
+- [digital_costas_loop_cc_0, '0', blocks_skiphead_0, '0']
+- [digital_costas_loop_cc_0, '0', epy_block_4, '0']
 - [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_symbol_sync_xx_0, '0', digital_costas_loop_cc_0, '0']
+- [epy_block_4, '0', digital_constellation_decoder_cb_0, '0']
 
 metadata:
   file_format: 1
