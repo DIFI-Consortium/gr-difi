@@ -296,14 +296,16 @@ blocks:
       \      )\n        self.pn_length = 2047  # Length of PN11 sequence: 2^11 - 1\n\
       \        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n        self.synced\
       \ = False\n        self.phase_shift = 0\n        self.temp_count = 0\n     \
-      \   self.wait_n_samps = 100000\n        self.ii = 0\n        self.waiting =\
-      \ True\n\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i\
-      \ = 0\n        self.n_calls = 0\n        \n        self.corr_thresh = 1000.0\n\
-      \  \n        # QPSK Demod\n        self.bit_mapping = {\n            (-1-1j):\
-      \ [0, 0],\n            (1-1j):  [0, 1],\n            (-1+1j): [1, 0],\n    \
-      \        (1+1j):  [1, 1],\n        }\n            \n            \n        #\
-      \ Craft search preamble\n        self.qpsk_mapping = np.asarray([-1-1j, 1-1j,\
-      \ -1+1j, 1+1j], dtype=np.complex64)\n        self.search_preamble = np.zeros(self.pn_length//2,\
+      \   self.wait_n_samps = 10000\n        self.ii = 0\n        self.waiting = True\n\
+      \n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i = 0\n \
+      \       self.n_calls = 0\n        \n        self.corr_thresh = 1000.0\n  \n\
+      \        # QPSK Demod\n        self.bit_mapping = {\n            (-1-1j): [0,\
+      \ 0],\n            (1-1j):  [0, 1],\n            (-1+1j): [1, 0],\n        \
+      \    (1+1j):  [1, 1],\n        }\n        #self.bit_mapping = {\n        # \
+      \   (-1-1j): [0, 0],\n        #    (1-1j):  [1, 0],\n        #    (-1+1j): [0,\
+      \ 1],\n        #    (1+1j):  [1, 1],\n        #} \n            \n        # Craft\
+      \ search preamble\n        self.qpsk_mapping = np.asarray([-1-1j, 1-1j, -1+1j,\
+      \ 1+1j], dtype=np.complex64)\n        self.search_preamble = np.zeros(self.pn_length//2,\
       \ dtype=np.complex64)\n        for i in range(self.pn_length//2):\n        \
       \    self.search_preamble[i] = self.qpsk_mapping[self.seq[i*2] + self.seq[i*2+1]*2]\n\
       \n\n    def general_work(self, input_items, output_items):\n        in0 = input_items[0]\n\
@@ -322,8 +324,8 @@ blocks:
       \                    \n                    phase_diff = np.angle(input_items[0][i]\
       \ / self.search_preamble[0])\n                    closest = min([np.pi / 2,\
       \ np.pi, 3 * np.pi / 2, 2 * np.pi], key=lambda t: abs(phase_diff - t))\n   \
-      \                 self.phase_shift = np.exp(1j*closest)\n                  \
-      \  #print(\"Phase shift:\", self.phase_shift)\n                    #print(input_items[0][i:i+10]\
+      \                 self.phase_shift = np.exp(-1j*closest)\n                 \
+      \   #print(\"Phase shift:\", self.phase_shift)\n                    #print(input_items[0][i:i+10]\
       \ * -1 * self.phase_shift)\n                    self.consume(0, i) # drop the\
       \ samples right before the spike\n                    return 0\n           \
       \ #print(\"No sync found, max corr:\", max_corr)\n            self.consume(0,\
@@ -343,7 +345,7 @@ blocks:
       \ + n]\n            self.i += n\n            self.i %= self.pn_length\n    \
       \        current_nerrs = np.sum(np.bitwise_xor(demod_bits, sub_seq).astype('float32'))\n\
       \            self.nerrs += current_nerrs\n            if current_nerrs / n >\
-      \ 0.25:\n                print(\"High BER, resyncing!\")\n                self.synced\
+      \ 0.5:\n                print(\"High BER, resyncing!\")\n                self.synced\
       \ = False\n            self.nbits += n\n            self.n_calls += 1\n    \
       \        if self.n_calls > 100: # too many prints otherwise, will slow down\
       \ GR\n                print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
