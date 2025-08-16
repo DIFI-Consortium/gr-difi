@@ -59,7 +59,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '100000'
+    value: '1000000'
   states:
     bus_sink: false
     bus_source: false
@@ -235,7 +235,7 @@ blocks:
     mode: 'False'
     offset: '0'
     port: '50003'
-    protocol: '1'
+    protocol: '2'
     reference_time_frac: '0'
     reference_time_full: '0'
     sample_rate: difi_samp_rate

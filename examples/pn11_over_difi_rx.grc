@@ -135,7 +135,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424, 300.0]
+    coordinate: [1296, 316.0]
     rotation: 0
     state: disabled
 - name: blocks_unpack_k_bits_bb_0
@@ -151,7 +151,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1816, 252.0]
+    coordinate: [1680, 252.0]
     rotation: 0
     state: enabled
 - name: difi_source_cpp_0_0
@@ -166,14 +166,14 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     port: '50003'
-    protocol: '1'
+    protocol: '2'
     stream_num: '0'
     type: complex
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [48, 188.0]
+    coordinate: [24, 188.0]
     rotation: 0
     state: enabled
 - name: digital_constellation_decoder_cb_0
@@ -189,7 +189,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1544, 252.0]
+    coordinate: [1456, 252.0]
     rotation: 0
     state: enabled
 - name: digital_costas_loop_cc_0
@@ -275,18 +275,21 @@ blocks:
       \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
       \nclass pn11_ber(gr.basic_block):\n    def __init__(self, seed=1):\n       \
       \ gr.basic_block.__init__(\n            self,\n            name='PN11 Sync',\n\
-      \            in_sig=[np.complex64], #[np.uint8],\n            out_sig=[np.complex64]\n\
-      \        )\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i\
-      \ = 0\n        self.n_calls = 0\n        self.pn_length = 2047  # Length of\
-      \ PN11 sequence: 2^11 - 1\n        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n\
-      \        self.synced = False\n        self.phase_shift = 0\n        self.temp_count\
-      \ = 0\n\n        self.corr_thresh = 1000.0\n        \n        # Craft search\
-      \ preamble\n        qpsk_mapping = np.asarray([-1-1j, 1-1j, -1+1j, 1+1j], dtype=np.complex64)\n\
-      \        self.search_preamble = np.zeros(self.pn_length//2, dtype=np.complex64)\n\
-      \        for i in range(self.pn_length//2):\n            self.search_preamble[i]\
-      \ = qpsk_mapping[self.seq[i*2] + self.seq[i*2+1]*2]\n\n\n    def general_work(self,\
-      \ input_items, output_items):\n        in0 = input_items[0]\n        out = output_items[0]\n\
-      \        N = len(out)\n        if not self.synced:\n            if N <= self.pn_length:\
+      \            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n  \
+      \      )\n        self.pn_length = 2047  # Length of PN11 sequence: 2^11 - 1\n\
+      \        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n        self.synced\
+      \ = False\n        self.phase_shift = 0\n        self.temp_count = 0\n     \
+      \   self.reset_i = 0\n        self.wait_n_samps = 100000\n        self.ii =\
+      \ 0\n        self.waiting = True\n\n        self.corr_thresh = 1000.0\n    \
+      \    \n        # Craft search preamble\n        qpsk_mapping = np.asarray([-1-1j,\
+      \ 1-1j, -1+1j, 1+1j], dtype=np.complex64)\n        self.search_preamble = np.zeros(self.pn_length//2,\
+      \ dtype=np.complex64)\n        for i in range(self.pn_length//2):\n        \
+      \    self.search_preamble[i] = qpsk_mapping[self.seq[i*2] + self.seq[i*2+1]*2]\n\
+      \n\n    def general_work(self, input_items, output_items):\n        in0 = input_items[0]\n\
+      \        out = output_items[0]\n        N = len(out)\n        \n        if self.waiting:\n\
+      \            self.ii += N\n            if self.ii > self.wait_n_samps:\n   \
+      \             self.waiting = False\n            self.consume(0, N)\n       \
+      \     return 0\n        \n        if not self.synced:\n            if N <= self.pn_length:\
       \ # need more samples\n                return 0\n            max_corr = 0\n\
       \            for i in range(N - self.pn_length//2):\n                corr =\
       \ np.abs(np.dot(input_items[0][i:i+self.pn_length//2], self.search_preamble))\n\
@@ -305,7 +308,9 @@ blocks:
       \ print(\"No sync found, max corr:\", max_corr)\n            self.consume(0,\
       \ N - self.pn_length//2)\n            self.temp_count += N - self.pn_length//2\n\
       \            return 0\n            \n        else: # Straight copy\n       \
-      \     n = min(len(in0), N)\n            out[:n] = in0[:n] # * self.phase_shift\n\
+      \     n = min(len(in0), N)\n            self.reset_i += n\n            #if self.reset_i\
+      \ > 1000000: # periodically resync\n            #    self.synced = False\n \
+      \           #    self.reset_i = 0\n            out[:n] = in0[:n] # * self.phase_shift\n\
       \            self.consume(0, n)\n            return n\n            \n      \
       \  \n"
     affinity: ''
@@ -363,7 +368,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1968, 252.0]
+    coordinate: [1840, 252.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
