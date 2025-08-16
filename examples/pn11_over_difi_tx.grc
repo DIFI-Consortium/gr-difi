@@ -58,7 +58,11 @@ blocks:
 - name: difi_samp_rate
   id: variable
   parameters:
-    comment: ''
+    comment: 'below 1 MHz I get tons
+
+      of out of order packets
+
+      for some reason'
     value: '1000000'
   states:
     bus_sink: false
