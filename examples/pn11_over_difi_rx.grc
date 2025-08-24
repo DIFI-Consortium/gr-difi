@@ -216,7 +216,7 @@ blocks:
     alias: ''
     comment: ''
     maxoutbuf: '0'
-    minoutbuf: '0'
+    minoutbuf: '10000000'
     order: '4'
     use_snr: 'False'
     w: '0.06'
@@ -290,64 +290,70 @@ blocks:
       \        # Feedback using taps at positions 11 and 9 (indexes 10 and 8)\n  \
       \      feedback = reg[10] ^ reg[8]\n        # Shift left and insert feedback\
       \ at the beginning\n        reg = [feedback] + reg[:-1]\n    return np.asarray(output)\n\
-      \nclass pn11_ber(gr.basic_block):\n    def __init__(self, seed=1):\n       \
-      \ gr.basic_block.__init__(\n            self,\n            name='PN11 Sync',\n\
-      \            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n  \
-      \      )\n        self.pn_length = 2047  # Length of PN11 sequence: 2^11 - 1\n\
-      \        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n        self.synced\
-      \ = False\n        self.phase_shift = 0\n        self.temp_count = 0\n     \
-      \   self.wait_n_samps = 10000\n        self.ii = 0\n        self.waiting = True\n\
-      \n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.i = 0\n \
-      \       self.n_calls = 0\n        \n        self.corr_thresh = 1000.0\n  \n\
-      \        # QPSK Demod\n        self.bit_mapping = {\n            (-1-1j): [0,\
-      \ 0],\n            (1-1j):  [0, 1],\n            (-1+1j): [1, 0],\n        \
-      \    (1+1j):  [1, 1],\n        }\n        #self.bit_mapping = {\n        # \
-      \   (-1-1j): [0, 0],\n        #    (1-1j):  [1, 0],\n        #    (-1+1j): [0,\
-      \ 1],\n        #    (1+1j):  [1, 1],\n        #} \n            \n        # Craft\
-      \ search preamble\n        self.qpsk_mapping = np.asarray([-1-1j, 1-1j, -1+1j,\
-      \ 1+1j], dtype=np.complex64)\n        self.search_preamble = np.zeros(self.pn_length//2,\
+      \nclass pn11_ber(gr.basic_block):\n    def __init__(self, seed=1, threshold=0.9):\n\
+      \        gr.basic_block.__init__(\n            self,\n            name='PN11\
+      \ Sync',\n            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n\
+      \        )\n        self.pn_length = 2047  # Length of PN11 sequence: 2^11 -\
+      \ 1\n        self.seq = pn11_gen(seed=seed, length=self.pn_length*2)\n     \
+      \   self.synced = False\n        self.phase_shift = 0\n        self.temp_count\
+      \ = 0\n        self.wait_n_samps = 10000\n        self.wait_i = 0\n        self.waiting\
+      \ = True\n\n        self.nbits = 0.0\n        self.nerrs = 0.0\n        self.seq_i\
+      \ = 0\n        self.n_calls = 0\n        \n        self.corr_thresh = threshold\n\
+      \  \n        # QPSK Demod\n        self.bit_mapping = {\n            (-1-1j):\
+      \ [0, 0],\n            (1-1j):  [0, 1],\n            (-1+1j): [1, 0],\n    \
+      \        (1+1j):  [1, 1],\n        }\n        #self.bit_mapping = {\n      \
+      \  #    (-1-1j): [0, 0],\n        #    (1-1j):  [1, 0],\n        #    (-1+1j):\
+      \ [0, 1],\n        #    (1+1j):  [1, 1],\n        #} \n            \n      \
+      \  # Craft search preamble\n        self.qpsk_mapping = np.asarray([-1-1j, 1-1j,\
+      \ -1+1j, 1+1j], dtype=np.complex64)\n        self.search_preamble = np.zeros(self.pn_length//2,\
       \ dtype=np.complex64)\n        for i in range(self.pn_length//2):\n        \
       \    self.search_preamble[i] = self.qpsk_mapping[self.seq[i*2] + self.seq[i*2+1]*2]\n\
       \n\n    def general_work(self, input_items, output_items):\n        in0 = input_items[0]\n\
       \        out = output_items[0]\n        N = len(out)\n        \n        if self.waiting:\n\
-      \            self.ii += N\n            if self.ii > self.wait_n_samps:\n   \
-      \             self.waiting = False\n            self.consume(0, N)\n       \
-      \     return 0\n        \n        if not self.synced:\n            if N <= self.pn_length:\
-      \ # need more samples\n                return 0\n            max_corr = 0\n\
-      \            for i in range(N - self.pn_length//2):\n                corr =\
-      \ np.abs(np.dot(input_items[0][i:i+self.pn_length//2], self.search_preamble))\n\
-      \                # With QPSK there's actually no need to check all 4 rotations,\
-      \ rotating doesnt change the abs(corr(dot()))\n                if corr > max_corr:\n\
-      \                    max_corr = corr\n                if corr > self.corr_thresh:\n\
-      \                    print(\"Synced! at index\", i)\n                    #print(\"\
-      self.temp_count\", self.temp_count)\n                    self.synced = True\n\
-      \                    \n                    phase_diff = np.angle(input_items[0][i]\
-      \ / self.search_preamble[0])\n                    closest = min([np.pi / 2,\
-      \ np.pi, 3 * np.pi / 2, 2 * np.pi], key=lambda t: abs(phase_diff - t))\n   \
-      \                 self.phase_shift = np.exp(-1j*closest)\n                 \
-      \   #print(\"Phase shift:\", self.phase_shift)\n                    #print(input_items[0][i:i+10]\
-      \ * -1 * self.phase_shift)\n                    self.consume(0, i) # drop the\
-      \ samples right before the spike\n                    return 0\n           \
-      \ #print(\"No sync found, max corr:\", max_corr)\n            self.consume(0,\
-      \ N - self.pn_length//2)\n            self.temp_count += N - self.pn_length//2\n\
-      \            return 0\n            \n        else: # Demod and calc BER but\
-      \ also output the IQ samples for any further downstream processing\n       \
-      \     n = min(len(in0), N)\n            n = min(n, len(self.seq)//2)\n     \
-      \       n = n - (n % 2) # make sure it's even\n            if n < 50:\n    \
-      \            return 0 # want more to be able to tell BER is crap in just 1 call\
+      \            self.wait_i += N\n            if self.wait_i > self.wait_n_samps:\n\
+      \                self.waiting = False\n            self.consume(0, N)\n    \
+      \        return 0\n        \n        if not self.synced:\n            if N <=\
+      \ self.pn_length: # need more samples\n                return 0\n          \
+      \  max_corr = 0\n            for i in range(N - self.pn_length//2):\n      \
+      \          corr = np.abs(np.dot(input_items[0][i:i+self.pn_length//2], self.search_preamble))\
+      \ / (self.pn_length//2)\n                # With QPSK there's actually no need\
+      \ to check all 4 rotations, rotating doesnt change the abs(corr(dot()))\n  \
+      \              if corr > max_corr:\n                    max_corr = corr\n  \
+      \              if corr > self.corr_thresh:\n                    #print(\"Synced!\
+      \ at index\", i)\n                    #print(\"self.temp_count\", self.temp_count)\n\
+      \                    self.synced = True\n                    self.seq_i = 0\
+      \ # important!\n                    \n                    # Note that the act\
+      \ of calculating these and printing was causing an overflow and leading to it\
+      \ never staying synced\n                    #phase_diff = np.mean(np.angle(input_items[0][i:i+self.pn_length//2]\
+      \ * np.conj(self.search_preamble)))\n                    #closest = min([0,\
+      \ np.pi / 2, np.pi, 3 * np.pi / 2, 2 * np.pi], key=lambda t: abs(phase_diff\
+      \ - t))\n                    #self.phase_shift = np.exp(1j*closest)\n\n    \
+      \                #print(\"Phase shift:\", self.phase_shift) # first one is always\
+      \ 1+0j\n                    # I think what's happening is there ends up never\
+      \ being a 1 bit shift because of the number of samples per difi packet\n   \
+      \                 #print(input_items[0][i:i+10] * -1 * self.phase_shift)\n \
+      \                   self.consume(0, i) # drop the samples right before the spike\n\
+      \                    return 0\n            #print(\"No sync found, max corr:\"\
+      , max_corr)\n            self.consume(0, N - self.pn_length//2) # discard the\
+      \ samples we put through the correlator with no match\n            self.temp_count\
+      \ += N - self.pn_length//2\n            return 0\n            \n        else:\
+      \ # Demod and calc BER but also output the IQ samples for any further downstream\
+      \ processing\n            n = min(len(in0), N, len(self.seq)//2)\n         \
+      \   n = n - (n % 2) # force it to be even\n            if n < 50:\n        \
+      \        return 0 # want more to be able to tell BER is crap in just 1 call\
       \ to work\n            \n            demod_bits = []\n            for s in in0[:n//2]:\
       \ # to produce n bits\n                distances = np.abs(self.qpsk_mapping\
       \ - s)\n                nearest_index = np.argmin(distances)\n             \
       \   nearest_symbol = self.qpsk_mapping[nearest_index]\n                bits\
       \ = self.bit_mapping[nearest_symbol]\n                demod_bits.extend(bits)\n\
       \            demod_bits = np.array(demod_bits, dtype=np.uint8)\n\n         \
-      \   # Calculate errors and bits processed\n            sub_seq = self.seq[self.i:self.i\
-      \ + n]\n            self.i += n\n            self.i %= self.pn_length\n    \
-      \        current_nerrs = np.sum(np.bitwise_xor(demod_bits, sub_seq).astype('float32'))\n\
+      \   # Calculate errors and bits processed\n            sub_seq = self.seq[self.seq_i:self.seq_i\
+      \ + n]\n            self.seq_i += n\n            self.seq_i %= self.pn_length\n\
+      \            current_nerrs = np.sum(np.bitwise_xor(demod_bits, sub_seq).astype('float32'))\n\
       \            self.nerrs += current_nerrs\n            if current_nerrs / n >\
-      \ 0.5:\n                print(\"High BER, resyncing!\")\n                self.synced\
+      \ 0.5:\n                #print(\"High BER, resyncing!\")\n                self.synced\
       \ = False\n            self.nbits += n\n            self.n_calls += 1\n    \
-      \        if self.n_calls > 100: # too many prints otherwise, will slow down\
+      \        if self.n_calls > 1000: # too many prints otherwise, will slow down\
       \ GR\n                print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
       \ \\tBER: {self.nerrs / self.nbits:.6f}\")\n                self.n_calls = 0\n\
       \n            out[:n//2] = in0[:n//2] # * self.phase_shift\n            self.consume(0,\
@@ -358,9 +364,10 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '4000'
     seed: '1'
+    threshold: '0.9'
   states:
-    _io_cache: ('PN11 Sync', 'pn11_ber', [('seed', '1')], [('0', 'complex', 1)], [('0',
-      'complex', 1)], '', [])
+    _io_cache: ('PN11 Sync', 'pn11_ber', [('seed', '1'), ('threshold', '0.9')], [('0',
+      'complex', 1)], [('0', 'complex', 1)], '', [])
     bus_sink: false
     bus_source: false
     bus_structure: null

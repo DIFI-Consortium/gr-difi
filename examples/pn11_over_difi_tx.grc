@@ -71,6 +71,27 @@ blocks:
     coordinate: [200, 20.0]
     rotation: 0
     state: enabled
+- name: noise
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: Noise Level
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.01'
+    stop: '2'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [616, 4.0]
+    rotation: 0
+    state: enabled
 - name: sps
   id: variable
   parameters:
@@ -88,7 +109,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amp: '0.0'
+    amp: noise
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -100,7 +121,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [592, 124.0]
+    coordinate: [592, 132.0]
     rotation: 0
     state: enabled
 - name: blocks_add_xx_0
