@@ -216,7 +216,7 @@ blocks:
     alias: ''
     comment: ''
     maxoutbuf: '0'
-    minoutbuf: '10000000'
+    minoutbuf: '100000'
     order: '4'
     use_snr: 'False'
     w: '0.06'
@@ -353,7 +353,7 @@ blocks:
       \            self.nerrs += current_nerrs\n            if current_nerrs / n >\
       \ 0.5:\n                #print(\"High BER, resyncing!\")\n                self.synced\
       \ = False\n            self.nbits += n\n            self.n_calls += 1\n    \
-      \        if self.n_calls > 1000: # too many prints otherwise, will slow down\
+      \        if self.n_calls > 200: # too many prints otherwise, will slow down\
       \ GR\n                print(f\"NBits: {int(self.nbits)} \\tNErrs: {int(self.nerrs)}\
       \ \\tBER: {self.nerrs / self.nbits:.6f}\")\n                self.n_calls = 0\n\
       \n            out[:n//2] = in0[:n//2] # * self.phase_shift\n            self.consume(0,\
@@ -509,7 +509,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 140.0]
+    coordinate: [1448, 100.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0
@@ -704,9 +704,9 @@ connections:
 - [digital_constellation_decoder_cb_0, '0', blocks_unpack_k_bits_bb_0, '0']
 - [digital_costas_loop_cc_0, '0', blocks_skiphead_0, '0']
 - [digital_costas_loop_cc_0, '0', epy_block_4, '0']
-- [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_symbol_sync_xx_0, '0', digital_costas_loop_cc_0, '0']
 - [epy_block_4, '0', blocks_null_sink_0, '0']
+- [epy_block_4, '0', qtgui_const_sink_x_0, '0']
 
 metadata:
   file_format: 1
