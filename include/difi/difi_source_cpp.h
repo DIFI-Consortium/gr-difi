@@ -19,6 +19,19 @@ namespace gr {
      public:
       typedef std::shared_ptr<difi_source_cpp<T>> sptr;
 
+      /*!
+       * \brief Make a DIFI source block.
+       *
+       * \param ip_addr Local IP address to bind the receiving socket to
+       *        (the interface to receive DIFI packets on). Use "0.0.0.0"
+       *        or an empty string to bind to all interfaces.
+       * \param port Local port to bind to.
+       * \param socket_type Transport: 1 = TCP, 2 = UDP.
+       * \param stream_number DIFI (VITA) stream number to accept, or -1
+       *        to accept any stream number.
+       * \param bit_depth Sample bit depth (8 or 16).
+       * \param context_pkt_behavior Context-packet mismatch behavior.
+       */
       static sptr make(std::string ip_addr, uint32_t port, uint8_t socket_type, int stream_number, int bit_depth, int context_pkt_behavior);
 
     };

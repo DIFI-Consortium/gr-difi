@@ -9,6 +9,7 @@
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
 #include <iostream>
@@ -29,7 +30,26 @@ namespace gr {
         memset(&d_servaddr, 0, sizeof(d_servaddr));
         d_servaddr.sin_family = AF_INET;
         d_servaddr.sin_port = htons(port);
-        d_servaddr.sin_addr.s_addr = INADDR_ANY;
+
+        // Bind to the requested local address. An empty string (or an
+        // unparseable address) falls back to INADDR_ANY so the listener
+        // still binds to every interface, preserving the previous
+        // behaviour for callers that do not specify an address.
+        if(ip_addr.empty())
+        {
+          d_servaddr.sin_addr.s_addr = INADDR_ANY;
+        }
+        else
+        {
+          in_addr_t addr = inet_addr(ip_addr.c_str());
+          if(addr == INADDR_NONE)
+          {
+            std::cerr << "Invalid bind address '" << ip_addr
+                      << "', falling back to INADDR_ANY" << std::endl;
+            addr = INADDR_ANY;
+          }
+          d_servaddr.sin_addr.s_addr = addr;
+        }
 
         if ((d_listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
         {

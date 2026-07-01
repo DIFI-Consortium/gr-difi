@@ -24,9 +24,9 @@ parameters:
   options: ['8', '16']
   default: '8'
 - id: ip_addr
-  label: Source IP Address
+  label: Bind IP Address
   dtype: string
-  default: "127.0.0.1"
+  default: "0.0.0.0"
 - id: port
   label: Port
   dtype: int
@@ -77,7 +77,10 @@ documentation: |-
      ===Params===
 
      ip_addr:
-     The ip address for the socket to expect DIFI packets from
+     The local IP address the socket binds to (the address of the interface
+     to receive DIFI packets on). Use "0.0.0.0" (or an empty string) to bind
+     to all interfaces. Bind to a specific interface address to avoid
+     receiving traffic from other interfaces on the same port.
 
      port:
      the port number for the socket
