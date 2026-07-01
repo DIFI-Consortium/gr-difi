@@ -30,7 +30,27 @@ namespace difi {
         d_servaddr.sin_port = htons(port);
 
         if(isServer)
-            d_servaddr.sin_addr.s_addr = INADDR_ANY;
+        {
+            // Bind to the requested local address. An empty string (or an
+            // unparseable address) falls back to INADDR_ANY so the socket
+            // still binds to every interface, preserving the previous
+            // behaviour for callers that do not specify an address.
+            if(ipaddr.empty())
+            {
+                d_servaddr.sin_addr.s_addr = INADDR_ANY;
+            }
+            else
+            {
+                in_addr_t addr = inet_addr(ipaddr.c_str());
+                if(addr == INADDR_NONE)
+                {
+                    std::cerr << "Invalid bind address '" << ipaddr
+                              << "', falling back to INADDR_ANY" << std::endl;
+                    addr = INADDR_ANY;
+                }
+                d_servaddr.sin_addr.s_addr = addr;
+            }
+        }
         else
             d_servaddr.sin_addr.s_addr = inet_addr(ipaddr.c_str());
 
