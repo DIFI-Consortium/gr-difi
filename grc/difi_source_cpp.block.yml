@@ -8,7 +8,7 @@ label: DIFI Source
 category: '[DIFI]'
 templates:
   imports: import difi
-  make: difi.difi_source_cpp_${type.fcn}(${ip_addr}, ${port}, ${protocol}, ${stream_num}, int(${bit_depth}), int(${context_behavior}))
+  make: difi.difi_source_cpp_${type.fcn}(${ip_addr}, ${port}, ${protocol}, ${stream_num}, int(${bit_depth}), int(${context_behavior}), ${reorder}, ${reorder_hold_ms})
 
 parameters:
 - id: type
@@ -47,6 +47,19 @@ parameters:
   default: 'Default'
   options: ['0', '1', '2', '3']
   option_labels: ['Default - Throw Exceptions', 'Ignore - Forward Data, No Warnings', 'Throw Warnings - Forward', 'Throw Warnings - No Foward']
+- id: reorder
+  label: Reorder Packets
+  category: DIFI Advanced
+  dtype: enum
+  default: 'False'
+  options: ['True', 'False']
+  option_labels: ['Yes', 'No']
+- id: reorder_hold_ms
+  label: Reorder Hold Time (ms)
+  category: DIFI Advanced
+  dtype: real
+  default: '20.0'
+  hide: ${ 'none' if reorder == 'True' else 'all' }
 outputs:
 -   domain: stream
     dtype: ${ type.fcn }
@@ -93,6 +106,21 @@ documentation: |-
 
      context_pkt_behavior:
      Set the behavior of handling non-compliant context packets.
+
+     reorder:
+     Buffer out-of-order DIFI data packets and emit them in packet-counter order.
+     The VITA counter is 4 bits (mod 16), so reorder distances of up to 7 packets
+     can be corrected; anything further is indistinguishable from loss. Late
+     duplicates (at or behind the play cursor) are dropped. Off by default.
+
+     reorder_hold_ms:
+     Only with reorder enabled: how long to wait on a missing packet (a gap in
+     the counter sequence) before declaring it lost and skipping it. Larger
+     values ride out retransmissions on the transport; smaller values bound the
+     added latency on real loss. Independent of this timer, a gap is declared
+     lost immediately when the counter wraps a full mod-16 cycle onto a packet
+     still being held (the gap can provably never fill), so a truly lost packet
+     never stalls the stream longer than 16 packet times.
 
 
 file_format: 1

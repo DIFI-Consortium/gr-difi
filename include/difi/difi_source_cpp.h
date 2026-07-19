@@ -19,7 +19,10 @@ namespace gr {
      public:
       typedef std::shared_ptr<difi_source_cpp<T>> sptr;
 
-      static sptr make(std::string ip_addr, uint32_t port, uint8_t socket_type, int stream_number, int bit_depth, int context_pkt_behavior);
+      // reorder: buffer out-of-order DIFI data packets (up to 7 ahead, the mod-16
+      // counter's limit) and emit them in packet-counter order; a gap is waited on
+      // for reorder_hold_ms before it is declared lost and skipped.
+      static sptr make(std::string ip_addr, uint32_t port, uint8_t socket_type, int stream_number, int bit_depth, int context_pkt_behavior, bool reorder = false, float reorder_hold_ms = 20.0f);
 
     };
     typedef difi_source_cpp<gr_complex> difi_source_cpp_fc32;

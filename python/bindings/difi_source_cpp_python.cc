@@ -32,6 +32,8 @@ void bind_difi_source_cpp_template(py::module& m, const char* classname)
            py::arg("stream_number"),
            py::arg("bit_depth"),
            py::arg("context_pkt_behavior"),
+           py::arg("reorder") = false,
+           py::arg("reorder_hold_ms") = 20.0f,
            D(difi_source_cpp,make)
         );
 }
