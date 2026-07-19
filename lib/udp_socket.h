@@ -16,7 +16,10 @@ class udp_socket
 {
     public:
 
-        udp_socket(std::string ip_addr, uint32_t port, bool isServer, uint32_t socket_buffer_size=2000000);
+        // 64 MB request: SO_RCVBUF is clamped to net.core.rmem_max anyway, so
+        // asking big simply takes whatever headroom the host allows (a few ms
+        // of stall tolerance per MB at high sample rates).
+        udp_socket(std::string ip_addr, uint32_t port, bool isServer, uint32_t socket_buffer_size=64000000);
         ~udp_socket();
 
         int read(int8_t* buf, int len);

@@ -40,11 +40,21 @@ namespace difi {
             throw std::runtime_error("Could not make UDP socket");
         }
 
-        if(setsockopt(d_socket, SOL_SOCKET, SO_RCVBUF, &sock_buffer_size, sizeof(sock_buffer_size)) < 0)
+        // SO_RCVBUF is silently capped at net.core.rmem_max (~208 KB default —
+        // only a few ms at high packet rates). With CAP_NET_ADMIN,
+        // SO_RCVBUFFORCE bypasses the cap; fall back to SO_RCVBUF otherwise.
+        if(setsockopt(d_socket, SOL_SOCKET, SO_RCVBUFFORCE, &sock_buffer_size, sizeof(sock_buffer_size)) < 0
+           && setsockopt(d_socket, SOL_SOCKET, SO_RCVBUF, &sock_buffer_size, sizeof(sock_buffer_size)) < 0)
         {
             std::cerr << "Could not set socket size" << std::endl;
             throw std::runtime_error("Could not set socket size");
         }
+        uint32_t effective = 0;
+        socklen_t optlen = sizeof(effective);
+        if (getsockopt(d_socket, SOL_SOCKET, SO_RCVBUF, &effective, &optlen) == 0)
+            std::cerr << "udp_socket: receive buffer " << effective << " bytes"
+                      << (effective < 2 * sock_buffer_size ? " (capped by net.core.rmem_max)" : "")
+                      << std::endl;
 
         if (setsockopt(d_socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
         {
