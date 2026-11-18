@@ -247,6 +247,41 @@ class qa_testcpp(gr_unittest.TestCase):
             pytest.fail()
 
     # test case were partial buffer is filled
+    def test_standalone_timestamp_rolls_over_second(self):
+        # Start just before a whole second so packet timestamps must carry from frac into full.
+        start_full = 5
+        start_frac = 999_000_000_000
+        samp_rate = int(1e6)
+        n_packets = 6
+        ps_per_packet = SAMPS_PER_PACKET * 10**12 // samp_rate
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('127.0.0.1', 0))
+        sock.settimeout(2)
+        sink_p = sock.getsockname()[1]
+
+        tb = gr.top_block()
+        vita_source = blocks.vector_source_c([0j] * (SAMPS_PER_PACKET * n_packets), False)
+        vita_sink = difi_sink_cpp_fc32(start_full, start_frac, '127.0.0.1', sink_p, socket.SOCK_DGRAM,
+                                       False, SAMPS_PER_PACKET, 0, samp_rate, 1000, 108, 8, 0, 0, 0, 0, 0)
+        tb.connect(vita_source, vita_sink)
+        tb.run()
+
+        data_timestamps = []
+        try:
+            while len(data_timestamps) < n_packets:
+                data = sock.recv(4096)
+                if struct.unpack('!I', data[0:4])[0] >> 28 == 0x1:  # data packets only, skip context
+                    payload = struct.unpack(DATA_PACKET_METADATA_FORMAT, data[0:28])
+                    data_timestamps.append((payload[3], payload[4]))
+        finally:
+            sock.close()
+
+        for k, (r_full, r_frac) in enumerate(data_timestamps):
+            full, frac = divmod(start_full * 10**12 + start_frac + k * ps_per_packet, 10**12)
+            assert r_full == full, f'packet {k}: full {r_full} != {full}'
+            assert math.isclose(r_frac, frac, abs_tol=2), f'packet {k}: frac {r_frac} != {frac}'
+
     def test_missed_pack_partial_buffer(self):
         source_p, sink_p = get_open_ports()
         tb = gr.top_block()
