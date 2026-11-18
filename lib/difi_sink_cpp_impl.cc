@@ -340,7 +340,7 @@ namespace gr {
       frac += u_int64_t((time_adj - u_int64_t(time_adj)) * difi::PICO_CONVERSION);
       if(frac >= difi::PICO_CONVERSION)
       {
-          frac = d_frac % difi::PICO_CONVERSION;
+          frac -= difi::PICO_CONVERSION;
           full += 1;
       }
       full += u_int32_t(time_adj);
